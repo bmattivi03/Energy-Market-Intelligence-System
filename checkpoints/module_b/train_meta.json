@@ -1,0 +1,80 @@
+{
+  "trained_at": "2026-06-02T10:38:59.955069+00:00",
+  "bundles": [
+    "calendar",
+    "lags",
+    "fundamentals",
+    "spike",
+    "regime",
+    "weather"
+  ],
+  "past_cols": [
+    "price_lag1h",
+    "price_lag2h",
+    "price_lag3h",
+    "price_lag24h",
+    "price_lag25h",
+    "price_lag48h",
+    "price_lag49h",
+    "price_lag168h",
+    "price_lag169h",
+    "price_rmean24h",
+    "price_rstd24h",
+    "price_rmean168h",
+    "price_rstd168h",
+    "price_rmean336h",
+    "price_rstd336h",
+    "clean_spark_anchor",
+    "clean_dark_anchor",
+    "gas_carbon_interaction",
+    "residual_load",
+    "renewable_penetration",
+    "is_high_residual_load",
+    "is_renewable_scarcity",
+    "crisis_2022_flag"
+  ],
+  "future_cols": [
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "month_sin",
+    "month_cos",
+    "is_weekend",
+    "is_holiday_DE",
+    "weather_mean_wind_speed_100m",
+    "weather_mean_shortwave_radiation"
+  ],
+  "quantiles": [
+    0.1,
+    0.5,
+    0.9
+  ],
+  "seed": 42,
+  "iterations": 500,
+  "early_stopping_rounds": 30,
+  "learning_rate": 0.05,
+  "cqr_alpha": 0.2,
+  "cqr_delta": 5.906161285654853,
+  "val_metrics_raw": {
+    "mae": 20.794785143261592,
+    "pinball": 7.237513432078593,
+    "coverage": 0.7089627391742196,
+    "winkler": 113.15147724604984
+  },
+  "val_metrics_cqr": {
+    "mae": 20.794785143261592,
+    "pinball": 7.152097758937205,
+    "coverage": 0.8000057002793137,
+    "winkler": 110.58900705180824
+  },
+  "test_metrics_cqr": {
+    "mae": 24.104895381884816,
+    "pinball": 8.373176004870176,
+    "coverage": 0.8294722545595654,
+    "winkler": 130.6708032366812
+  },
+  "n_train": 1047420,
+  "n_val": 210516,
+  "n_test": 51540
+}
