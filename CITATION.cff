@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite it as below."
+title: >-
+  Energy Market Intelligence System: Probabilistic Forecasting and
+  Risk-Aware Battery Dispatch in the German-Luxembourg Day-Ahead
+  Electricity Market
+abstract: >-
+  An end-to-end machine learning system for the German-Luxembourg (DE-LU)
+  day-ahead electricity market, organised around explicit propagation of
+  predictive uncertainty across three chained modules: a deep multivariate
+  imputation stage (improved Glocal-IB / SAITS with a Variational Information
+  Bottleneck and a Self-Supervised Held-out Blend), conformally calibrated
+  quantile forecasters for load (multi-scale LSTM) and price (per-quantile
+  CatBoost), and a CVaR-aware reinforcement-learning battery-dispatch agent.
+type: software
+authors:
+  - family-names: Mattivi
+    given-names: Brando
+  - family-names: Feliu
+    given-names: Roger
+  - family-names: Mezentsev
+    given-names: Daniil
+version: "1.0.0"
+date-released: "2026-06-04"
+license: MIT
+repository-code: "https://github.com/bmattivi03/Energy-Market-Intelligence-System"
+keywords:
+  - probabilistic forecasting
+  - conformal prediction
+  - quantile regression
+  - electricity markets
+  - reinforcement learning
+  - CVaR
+  - time series imputation
+  - energy
+references:
+  - type: article
+    title: "Glocal Information Bottleneck for Time Series Imputation"
+    authors:
+      - family-names: Yang
+        given-names: Jie
+      - family-names: Zhang
+        given-names: Kexin
+      - family-names: Zhang
+        given-names: Guibin
+      - family-names: Yu
+        given-names: "Philip S."
+      - family-names: Ding
+        given-names: Kaize
+    year: 2025
+    notes: "arXiv:2510.04910; NeurIPS 2025. Basis of the vendored GlocalIB/ imputer."

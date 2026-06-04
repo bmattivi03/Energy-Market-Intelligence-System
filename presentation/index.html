@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Energy Market Intelligence System</title>
+<link rel="stylesheet" href="assets/deck.css">
+<style>
+  .diagram text{font-family:'Plex',sans-serif;}
+  .diagram .nt{font-weight:600;font-size:16px;fill:var(--ink);}
+  .diagram .ns{font-family:'PlexMono';font-size:12px;fill:var(--muted);}
+  .diagram .al{font-family:'PlexMono';font-size:12.5px;font-weight:600;}
+  .qfan .band{fill:var(--accent);fill-opacity:.16;}
+  .qfan .ln{stroke:var(--accent);stroke-opacity:.55;stroke-width:2;}
+  .qfan .mid{stroke:var(--accent);stroke-width:3;}
+  .qfan .lab{font-family:'PlexMono';font-size:12px;fill:var(--accent);font-weight:600;}
+</style>
+</head>
+<body class="deck">
+
+<!-- ════════ 01 · TITLE ════════ -->
+<section class="slide dark accent-data">
+  <div class="title-wrap">
+    <div class="kicker"><span class="dot"></span>M.Sc. Machine Learning · Project Defense</div>
+    <h1 class="title-main">Energy&nbsp;Market<br>Intelligence <span class="em">System</span></h1>
+    <p class="title-sub">Forecasting &amp; battery dispatch <em>under uncertainty</em> in the
+      German–Luxembourg day-ahead electricity market.</p>
+    <svg class="qfan" viewBox="0 0 312 120" width="320" height="123" style="margin-top:30px">
+      <polygon class="band" points="8,60 252,14 252,106"/>
+      <line class="ln" x1="8" y1="60" x2="252" y2="14"/>
+      <line class="ln" x1="8" y1="60" x2="252" y2="106"/>
+      <line class="mid" x1="8" y1="60" x2="252" y2="60"/>
+      <text class="lab" x="256" y="18">q90</text>
+      <text class="lab" x="256" y="64">q50</text>
+      <text class="lab" x="256" y="110">q10</text>
+    </svg>
+    <div class="title-meta">
+      <span class="team">Brando Mattivi &nbsp;·&nbsp; Roger Feliu &nbsp;·&nbsp; Daniil Mezentsev</span>
+      <span>Free University of Bozen-Bolzano &nbsp;·&nbsp; June 2026</span>
+    </div>
+  </div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">01</span></div>
+</section>
+
+<!-- ════════ 02 · THE PROBLEM ════════ -->
+<section class="slide light accent-b">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>The problem</div>
+    <h2 class="headline">Day-ahead prices defy point forecasts</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <div class="card fig" style="width:100%"><img src="assets/img/price_volatility.png" alt="DE-LU day-ahead price 2025 Q1" style="max-height:286px;object-fit:contain;margin:0 auto"></div>
+    <p class="lede" style="text-align:center;max-width:1020px;margin-top:-2px">Renewables, weather and geopolitics
+      have made the market <b style="color:var(--ink)">unstable</b>: it no longer behaves the way it used to,
+      so a single predicted number is fragile.</p>
+    <div class="factrow">
+      <div class="fact"><div class="fn">+€543</div><div class="fl">intraday spike, €/MWh</div></div>
+      <div class="fact"><div class="fn">−€236</div><div class="fl">goes negative: surplus renewables, sellers pay to offload</div></div>
+      <div class="fact"><div class="fn">volatile</div><div class="fl">regime-shifting; the old patterns break</div></div>
+    </div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">02</span></div>
+</section>
+
+<!-- ════════ 03 · THESIS ════════ -->
+<section class="slide light accent-data">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>The idea</div>
+    <h2 class="headline">Forecast the band, not the point</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack">
+    <div class="grid2 text-img" style="align-items:center">
+      <ul class="points">
+        <li>We never predict <b>one number</b>. We predict a <b>band</b> (q10 / q50 / q90).</li>
+        <li>We are confident the true value lands <b>inside</b> that band.</li>
+        <li>The band is <b>propagated</b> downstream, then turned into <b>euros</b>.</li>
+      </ul>
+      <div class="center-fig">
+        <svg class="qfan" viewBox="0 0 300 150" width="100%" height="180">
+          <polygon class="band" points="10,75 292,18 292,132"/>
+          <line class="ln" x1="10" y1="75" x2="292" y2="18"/>
+          <line class="ln" x1="10" y1="75" x2="292" y2="132"/>
+          <line class="mid" x1="10" y1="75" x2="292" y2="75"/>
+          <text class="lab" x="60" y="146">forecast horizon →</text>
+        </svg>
+      </div>
+    </div>
+    <p class="qline">Each stage admits what it doesn't know, and that propagated uncertainty
+      is <span class="hl">what turns a battery into profit.</span></p>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">03</span></div>
+</section>
+
+<!-- ════════ 04 · ARCHITECTURE ════════ -->
+<section class="slide light accent-data">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>System architecture</div>
+    <h2 class="headline">One pipeline, five stages</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <svg class="diagram" viewBox="0 0 1128 300" width="100%" height="300">
+      <defs>
+        <marker id="aM" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#6B7178"/></marker>
+        <marker id="aD" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#7A5CA6"/></marker>
+        <marker id="aA" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#2C7FB8"/></marker>
+        <marker id="aB" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#D9772B"/></marker>
+        <marker id="aC" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#2E8B57"/></marker>
+      </defs>
+      <line x1="158" y1="150" x2="190" y2="150" stroke="#0E7C86" stroke-width="2.5" marker-end="url(#aD)"/>
+      <line x1="342" y1="150" x2="374" y2="150" stroke="#7A5CA6" stroke-width="2.5" marker-end="url(#aM)"/>
+      <path d="M536,138 C575,120 565,80 600,72" fill="none" stroke="#6B7178" stroke-width="2.5" marker-end="url(#aM)"/>
+      <path d="M536,162 C575,180 565,222 600,228" fill="none" stroke="#6B7178" stroke-width="2.5" marker-end="url(#aM)"/>
+      <path d="M770,76 C805,90 800,128 824,138" fill="none" stroke="#2C7FB8" stroke-width="3" marker-end="url(#aA)"/>
+      <path d="M770,224 C805,210 800,172 824,162" fill="none" stroke="#D9772B" stroke-width="3" marker-end="url(#aB)"/>
+      <line x1="984" y1="150" x2="1006" y2="150" stroke="#2E8B57" stroke-width="2.5" marker-end="url(#aC)"/>
+      <text class="al" x="812" y="92" fill="#2C7FB8">load q10·50·90</text>
+      <text class="al" x="812" y="214" fill="#D9772B">price q10·50·90</text>
+      <g><rect x="8" y="110" width="150" height="80" rx="13" fill="#0E7C86" fill-opacity=".07" stroke="#0E7C86" stroke-width="2"/>
+        <text class="nt" x="83" y="146" text-anchor="middle">Data APIs</text><text class="ns" x="83" y="166" text-anchor="middle">ENTSO·E · weather</text></g>
+      <g><rect x="192" y="110" width="150" height="80" rx="13" fill="#7A5CA6" fill-opacity=".09" stroke="#7A5CA6" stroke-width="2"/>
+        <text class="nt" x="267" y="146" text-anchor="middle">SSHB imputer</text><text class="ns" x="267" y="166" text-anchor="middle">Glocal·IB</text></g>
+      <g><rect x="376" y="110" width="160" height="80" rx="13" fill="#6B7178" fill-opacity=".08" stroke="#6B7178" stroke-width="2"/>
+        <text class="nt" x="456" y="146" text-anchor="middle">Clean data</text><text class="ns" x="456" y="166" text-anchor="middle">train · val · test</text></g>
+      <g><rect x="600" y="34" width="170" height="78" rx="13" fill="#2C7FB8" fill-opacity=".08" stroke="#2C7FB8" stroke-width="2"/>
+        <text class="nt" x="685" y="68" text-anchor="middle">Module A</text><text class="ns" x="685" y="88" text-anchor="middle">Load · LSTM</text></g>
+      <g><rect x="600" y="188" width="170" height="78" rx="13" fill="#D9772B" fill-opacity=".10" stroke="#D9772B" stroke-width="2"/>
+        <text class="nt" x="685" y="222" text-anchor="middle">Module B</text><text class="ns" x="685" y="242" text-anchor="middle">Price · CatBoost</text></g>
+      <g><rect x="824" y="110" width="160" height="80" rx="13" fill="#2E8B57" fill-opacity=".10" stroke="#2E8B57" stroke-width="2"/>
+        <text class="nt" x="904" y="146" text-anchor="middle">Module C</text><text class="ns" x="904" y="166" text-anchor="middle">RL dispatch</text></g>
+      <g><rect x="1006" y="118" width="114" height="64" rx="12" fill="#14181C" fill-opacity=".05" stroke="#14181C" stroke-width="2"/>
+        <text class="nt" x="1063" y="146" text-anchor="middle">Battery €</text><text class="ns" x="1063" y="165" text-anchor="middle">schedule</text></g>
+    </svg>
+    <p class="lede" style="text-align:center;max-width:1000px">Two forecasters and one decision agent, each consuming the previous stage's <b style="color:var(--ink)">quantiles</b>.</p>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">04</span></div>
+</section>
+
+<!-- ════════ DIVIDER 01 ════════ -->
+<section class="slide dark accent-imp">
+  <div class="divider">
+    <div class="kicker"><span class="dot"></span>Part 01</div>
+    <div class="stage-num">01</div>
+    <div class="stage-title">Data &amp; Imputation</div>
+    <p class="stage-sub">Six messy external sources, repaired by a self-supervised deep imputer
+      before any model sees them.</p>
+    <div class="stage-accent"></div>
+  </div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">05</span></div>
+</section>
+
+<!-- ════════ 06 · DATA SOURCES ════════ -->
+<section class="slide light accent-data">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Data · sources</div>
+    <h2 class="headline">Six external data sources</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack">
+    <table class="appx">
+      <thead><tr><th>Source</th><th>Signal</th><th>Endpoint / note</th></tr></thead>
+      <tbody>
+        <tr><td>ENTSO-E</td><td>Day-ahead price (€/MWh)</td><td class="mono muted">A44 · market zone</td></tr>
+        <tr><td>ENTSO-E</td><td>Actual load (MW)</td><td class="mono muted">A65 · physical zone</td></tr>
+        <tr><td>ENTSO-E</td><td>Generation · 17 fuels (MW)</td><td class="mono muted">A75</td></tr>
+        <tr><td>ENTSO-E</td><td>Cross-border flows · FR/AT/CH</td><td class="mono muted">A11</td></tr>
+        <tr><td>Open-Meteo</td><td>Weather · 5 German cities</td><td class="mono muted">temp · wind · radiation</td></tr>
+        <tr><td>Yahoo / Energy-Charts</td><td>TTF gas &amp; EU-ETS carbon</td><td class="mono muted">daily fuel prices</td></tr>
+      </tbody>
+    </table>
+    <div class="chips">
+      <span class="chip"><span class="k">61,368</span> hourly rows</span>
+      <span class="chip"><span class="k">2019–2025</span></span>
+      <span class="chip"><span class="k">47 → 52</span> columns</span>
+      <span class="chip">two EIC codes · <span class="k">market ≠ physical</span></span>
+    </div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">06</span></div>
+</section>
+
+<!-- ════════ 07 · MISSINGNESS ════════ -->
+<section class="slide light accent-imp">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Data · quality</div>
+    <h2 class="headline">Missing data is structured, not random</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <div class="card fig" style="width:100%"><img src="assets/img/missingness_heatmap.png" alt="missingness heatmap" style="max-height:330px;object-fit:contain;margin:0 auto"></div>
+    <div class="cols2">
+      <ul class="points"><li><b>Coal-gas:</b> no ENTSO-E records 2019–2022; the data does not exist.</li>
+        <li><b>Nuclear → 0</b>: a real 2023-04-15 shutdown, not a missing value.</li></ul>
+      <ul class="points"><li>Scattered holiday &amp; exchange gaps: short and recoverable.</li>
+        <li class="muted">Long structural gaps cannot be recovered; a naïve fill would inject fake signal.</li></ul>
+    </div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">07</span></div>
+</section>
+
+<!-- ════════ 08 · SSHB MECHANISM ════════ -->
+<section class="slide light accent-imp">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Imputation · SSHB</div>
+    <h2 class="headline">SSHB: self-supervised held-out blend</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <svg class="diagram" viewBox="0 0 1128 250" width="100%" height="300">
+      <defs>
+        <marker id="bM" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#6B7178"/></marker>
+        <marker id="bI" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#7A5CA6"/></marker>
+      </defs>
+      <line x1="150" y1="125" x2="196" y2="125" stroke="#6B7178" stroke-width="2.5" marker-end="url(#bM)"/>
+      <text class="al" x="173" y="113" text-anchor="middle" fill="#14181C">hold out 10%</text>
+      <path d="M340,118 C380,95 388,62 418,58" fill="none" stroke="#7A5CA6" stroke-width="2.5" marker-end="url(#bI)"/>
+      <path d="M340,132 C380,155 388,188 418,192" fill="none" stroke="#6B7178" stroke-width="2.5" marker-end="url(#bM)"/>
+      <path d="M626,58 C672,80 668,100 700,112" fill="none" stroke="#7A5CA6" stroke-width="2.5" marker-end="url(#bI)"/>
+      <path d="M626,192 C672,170 668,150 700,138" fill="none" stroke="#6B7178" stroke-width="2.5" marker-end="url(#bM)"/>
+      <line x1="862" y1="125" x2="918" y2="125" stroke="#7A5CA6" stroke-width="2.5" marker-end="url(#bI)"/>
+      <g><rect x="10" y="85" width="140" height="80" rx="13" fill="#6B7178" fill-opacity=".08" stroke="#6B7178" stroke-width="2"/>
+        <text class="nt" x="80" y="121" text-anchor="middle">Observed</text><text class="ns" x="80" y="141" text-anchor="middle">series</text></g>
+      <g><rect x="196" y="85" width="144" height="80" rx="13" fill="#6B7178" fill-opacity=".08" stroke="#6B7178" stroke-width="2"/>
+        <text class="nt" x="268" y="121" text-anchor="middle">Masked</text><text class="ns" x="268" y="141" text-anchor="middle">input</text></g>
+      <g><rect x="418" y="22" width="208" height="74" rx="13" fill="#7A5CA6" fill-opacity=".10" stroke="#7A5CA6" stroke-width="2"/>
+        <text class="nt" x="522" y="54" text-anchor="middle">SAITS deep model</text><text class="ns" x="522" y="74" text-anchor="middle">transformer · (A)</text></g>
+      <g><rect x="418" y="156" width="208" height="74" rx="13" fill="#6B7178" fill-opacity=".08" stroke="#6B7178" stroke-width="2"/>
+        <text class="nt" x="522" y="188" text-anchor="middle">Whittaker–Henderson</text><text class="ns" x="522" y="208" text-anchor="middle">smoother · (B)</text></g>
+      <g><rect x="700" y="85" width="162" height="80" rx="13" fill="#7A5CA6" fill-opacity=".14" stroke="#7A5CA6" stroke-width="2"/>
+        <text class="nt" x="781" y="121" text-anchor="middle">Blend w&#7522;⋆</text><text class="ns" x="781" y="141" text-anchor="middle">per feature</text></g>
+      <g><rect x="918" y="85" width="190" height="80" rx="13" fill="#2E8B57" fill-opacity=".10" stroke="#2E8B57" stroke-width="2"/>
+        <text class="nt" x="1013" y="121" text-anchor="middle">Impute</text><text class="ns" x="1013" y="141" text-anchor="middle">missing cells only</text></g>
+    </svg>
+    <p class="lede" style="text-align:center;max-width:1040px">A transformer learns to <b style="color:var(--ink)">reconstruct</b> held-out cells; a smoother captures local
+      trend. We <b style="color:var(--ink)">blend them per feature</b>. Where a series is unrecoverable, the weight
+      collapses to zero, and observed values are never overwritten.</p>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">08</span></div>
+</section>
+
+<!-- ════════ 09 · SSHB RESULTS ════════ -->
+<section class="slide light accent-imp">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Imputation · result</div>
+    <h2 class="headline">More variables made clean, zero regressions</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack" style="gap:22px">
+    <p class="lede" style="text-align:center;max-width:1120px;align-self:center;margin-bottom:-4px">Of 47 columns, only
+      <b style="color:var(--ink)">24 carry real gaps</b> (generation, flows, fuels); price, load and weather are already complete.</p>
+    <div style="display:flex;align-items:center;justify-content:center;gap:13px;font-family:'PlexMono';font-size:15px;flex-wrap:wrap;align-self:center">
+      <span class="chip">47 columns</span>
+      <span style="color:var(--muted)">→</span>
+      <span class="chip" style="border-color:color-mix(in srgb,var(--imp) 40%,var(--hair));background:color-mix(in srgb,var(--imp) 9%,#fff)">24 need imputation</span>
+      <span style="color:var(--muted)">→</span>
+      <span class="chip" style="border-color:color-mix(in srgb,var(--good) 48%,var(--hair));background:color-mix(in srgb,var(--good) 12%,#fff);color:var(--ink)"><b>11 recoverable</b></span>
+      <span style="color:var(--muted)">+</span>
+      <span class="chip" style="color:var(--muted)">13 structural · left untouched</span>
+    </div>
+    <div class="grid2 text-img" style="align-items:center">
+    <div>
+      <div class="figcap" style="margin:0 0 12px;color:var(--ink);font-weight:600;font-size:15px">Audit status · the 11 recoverable variables</div>
+      <div class="sbar"><div class="lab">baseline<br><b>SSHB off</b></div>
+        <div class="seg"><span style="width:27.3%;background:#2E8B57">3</span><span style="width:72.7%;background:#CC9A1F">8</span></div></div>
+      <div class="sbar"><div class="lab"><b>SSHB on</b></div>
+        <div class="seg"><span style="width:54.5%;background:#2E8B57">6</span><span style="width:45.5%;background:#CC9A1F">5</span></div></div>
+      <div class="legend" style="margin-top:14px;font-size:13.5px">
+        <span><i style="background:#2E8B57"></i>clean</span>
+        <span><i style="background:#CC9A1F"></i>usable</span>
+      </div>
+      <p class="figcap" style="margin-top:18px;line-height:1.5">+ <b style="color:var(--ink)">13 variables</b> are
+        structurally unrecoverable: no data exists (coal-gas 2019–22), real shutdowns (nuclear), or
+        variance-collapse (cross-border flows). <b style="color:var(--ink)">Out of scope by design</b>; SSHB
+        self-limits and leaves them untouched.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="stat" style="border-top-color:var(--good)"><div class="num">3 → 6</div><div class="lbl">recoverable variables <b>promoted to clean</b> (+3)</div></div>
+      <div class="stat"><div class="num">53.9<span class="u">%</span></div><div class="lbl">of imputed cells <b>refined</b> · <b>0</b> physical violations</div></div>
+    </div>
+  </div></div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">09</span></div>
+</section>
+
+<!-- ════════ DIVIDER 02 ════════ -->
+<section class="slide dark accent-a">
+  <div class="divider">
+    <div class="kicker"><span class="dot"></span>Part 02 · Module A</div>
+    <div class="stage-num">02</div>
+    <div class="stage-title">Load forecasting</div>
+    <p class="stage-sub">A multi-scale LSTM that emits the first calibrated quantile band of the pipeline.</p>
+    <div class="stage-accent"></div>
+  </div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">10</span></div>
+</section>
+
+<!-- ════════ 11 · MODULE A ARCHITECTURE ════════ -->
+<section class="slide light accent-a">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Module A · architecture</div>
+    <h2 class="headline">A multi-scale LSTM</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <svg class="diagram" viewBox="0 0 1100 270" width="100%" height="300">
+      <defs><marker id="lA" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#2C7FB8"/></marker>
+        <marker id="lM" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#6B7178"/></marker></defs>
+      <path d="M182,120 C220,96 232,78 268,72" fill="none" stroke="#6B7178" stroke-width="2.5" marker-end="url(#lM)"/>
+      <path d="M182,150 C220,176 232,196 268,202" fill="none" stroke="#6B7178" stroke-width="2.5" marker-end="url(#lM)"/>
+      <path d="M488,72 C528,92 530,110 560,124" fill="none" stroke="#2C7FB8" stroke-width="2.5" marker-end="url(#lA)"/>
+      <path d="M488,202 C528,182 530,164 560,150" fill="none" stroke="#2C7FB8" stroke-width="2.5" marker-end="url(#lA)"/>
+      <line x1="700" y1="137" x2="748" y2="137" stroke="#2C7FB8" stroke-width="2.5" marker-end="url(#lA)"/>
+      <line x1="900" y1="137" x2="936" y2="137" stroke="#2C7FB8" stroke-width="2.5" marker-end="url(#lA)"/>
+      <g><rect x="10" y="97" width="172" height="80" rx="13" fill="#6B7178" fill-opacity=".08" stroke="#6B7178" stroke-width="2"/>
+        <text class="nt" x="96" y="132" text-anchor="middle">Input window</text><text class="ns" x="96" y="152" text-anchor="middle">168 h · load + drivers</text></g>
+      <g><rect x="268" y="36" width="220" height="72" rx="13" fill="#2C7FB8" fill-opacity=".08" stroke="#2C7FB8" stroke-width="2"/>
+        <text class="nt" x="378" y="68" text-anchor="middle">Short branch</text><text class="ns" x="378" y="88" text-anchor="middle">48 h → LSTM</text></g>
+      <g><rect x="268" y="166" width="220" height="72" rx="13" fill="#2C7FB8" fill-opacity=".08" stroke="#2C7FB8" stroke-width="2"/>
+        <text class="nt" x="378" y="198" text-anchor="middle">Long branch</text><text class="ns" x="378" y="218" text-anchor="middle">168 h → LSTM</text></g>
+      <g><rect x="560" y="101" width="140" height="72" rx="13" fill="#6B7178" fill-opacity=".08" stroke="#6B7178" stroke-width="2"/>
+        <text class="nt" x="630" y="133" text-anchor="middle">Concatenate</text><text class="ns" x="630" y="153" text-anchor="middle">256-dim</text></g>
+      <g><rect x="748" y="101" width="152" height="72" rx="13" fill="#2C7FB8" fill-opacity=".10" stroke="#2C7FB8" stroke-width="2"/>
+        <text class="nt" x="824" y="133" text-anchor="middle">MLP head</text><text class="ns" x="824" y="153" text-anchor="middle">pinball loss</text></g>
+      <polygon class="band" points="936,137 1090,104 1090,170" style="fill:#2C7FB8;fill-opacity:.16"/>
+      <line x1="936" y1="137" x2="1090" y2="104" style="stroke:#2C7FB8;stroke-opacity:.55;stroke-width:2"/>
+      <line x1="936" y1="137" x2="1090" y2="170" style="stroke:#2C7FB8;stroke-opacity:.55;stroke-width:2"/>
+      <line x1="936" y1="137" x2="1090" y2="137" style="stroke:#2C7FB8;stroke-width:3"/>
+      <text class="ns" x="1012" y="196" text-anchor="middle" style="fill:#2C7FB8;font-weight:600">q10·q50·q90 × 24 h</text>
+    </svg>
+    <p class="lede" style="text-align:center;max-width:980px">Two time-scales capture the daily and weekly load rhythm; CQR then calibrates the band.</p>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">11</span></div>
+</section>
+
+<!-- ════════ 12 · MODULE A RESULTS ════════ -->
+<section class="slide light accent-a">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Module A · results</div>
+    <h2 class="headline">Calibrated load forecasts</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <div class="card fig" style="width:100%"><img src="assets/img/module_a_sample_weeks.png" alt="Module A forecasts" style="max-height:300px;object-fit:contain;margin:0 auto">
+      <div class="figcap">h+1 forecast band vs. actual load · summer (validation) and winter (test) weeks.</div></div>
+    <div class="cols3">
+      <div class="fact"><div class="fn">2,591<span style="font-size:20px;color:var(--muted)"> MW</span></div><div class="fl"><b>q50</b> MAE · ≈ 5% relative error (nMAE)</div></div>
+      <div class="fact"><div class="fn">−5.3<span style="font-size:20px;color:var(--muted)">%</span></div><div class="fl">vs. the 1-week seasonal-naive baseline</div></div>
+      <div class="fact"><div class="fn">54→79<span style="font-size:20px;color:var(--muted)">%</span></div><div class="fl">interval coverage after CQR (δ +1,596 MW)</div></div>
+    </div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">12</span></div>
+</section>
+
+<!-- ════════ DIVIDER 03 ════════ -->
+<section class="slide dark accent-b">
+  <div class="divider">
+    <div class="kicker"><span class="dot"></span>Part 03 · Module B · production</div>
+    <div class="stage-num">03</div>
+    <div class="stage-title">Price forecasting</div>
+    <p class="stage-sub">Per-quantile gradient boosting with conformal, finite-sample calibrated intervals.</p>
+    <div class="stage-accent"></div>
+  </div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">13</span></div>
+</section>
+
+<!-- ════════ 14 · MODULE B ARCHITECTURE ════════ -->
+<section class="slide light accent-b">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Module B · architecture</div>
+    <h2 class="headline">Per-quantile boosting, then conformal</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <svg class="diagram" viewBox="0 0 1100 250" width="100%" height="262">
+      <defs><marker id="pB" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#D9772B"/></marker>
+        <marker id="pM" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#6B7178"/></marker></defs>
+      <path d="M200,110 C250,80 250,60 300,53" fill="none" stroke="#6B7178" stroke-width="2.2" marker-end="url(#pM)"/>
+      <line x1="200" y1="128" x2="300" y2="128" stroke="#6B7178" stroke-width="2.2" marker-end="url(#pM)"/>
+      <path d="M200,146 C250,176 250,196 300,203" fill="none" stroke="#6B7178" stroke-width="2.2" marker-end="url(#pM)"/>
+      <path d="M490,53 C540,80 545,100 590,122" fill="none" stroke="#D9772B" stroke-width="2.4" marker-end="url(#pB)"/>
+      <line x1="490" y1="128" x2="590" y2="128" stroke="#D9772B" stroke-width="2.4" marker-end="url(#pB)"/>
+      <path d="M490,203 C540,176 545,156 590,134" fill="none" stroke="#D9772B" stroke-width="2.4" marker-end="url(#pB)"/>
+      <line x1="800" y1="128" x2="838" y2="128" stroke="#D9772B" stroke-width="2.5" marker-end="url(#pB)"/>
+      <g><rect x="10" y="88" width="190" height="80" rx="13" fill="#D9772B" fill-opacity=".10" stroke="#D9772B" stroke-width="2"/>
+        <text class="nt" x="105" y="123" text-anchor="middle">33 causal features</text><text class="ns" x="105" y="143" text-anchor="middle">6 bundles · all past-only</text></g>
+      <g><rect x="300" y="26" width="190" height="54" rx="10" fill="#D9772B" fill-opacity=".10" stroke="#D9772B" stroke-width="1.8"/><text class="ns" x="395" y="58" text-anchor="middle" style="fill:#14181C;font-weight:600">CatBoost · q90</text></g>
+      <g><rect x="300" y="101" width="190" height="54" rx="10" fill="#D9772B" fill-opacity=".10" stroke="#D9772B" stroke-width="1.8"/><text class="ns" x="395" y="133" text-anchor="middle" style="fill:#14181C;font-weight:600">CatBoost · q50</text></g>
+      <g><rect x="300" y="176" width="190" height="54" rx="10" fill="#D9772B" fill-opacity=".10" stroke="#D9772B" stroke-width="1.8"/><text class="ns" x="395" y="208" text-anchor="middle" style="fill:#14181C;font-weight:600">CatBoost · q10</text></g>
+      <g><rect x="590" y="88" width="210" height="80" rx="13" fill="#D9772B" fill-opacity=".14" stroke="#D9772B" stroke-width="2"/>
+        <text class="nt" x="695" y="123" text-anchor="middle">Conformal (CQR)</text><text class="ns" x="695" y="143" text-anchor="middle">finite-sample coverage</text></g>
+      <polygon class="band" points="838,128 1086,92 1086,164" style="fill:#D9772B;fill-opacity:.16"/>
+      <line x1="838" y1="128" x2="1086" y2="92" style="stroke:#D9772B;stroke-opacity:.55;stroke-width:2"/>
+      <line x1="838" y1="128" x2="1086" y2="164" style="stroke:#D9772B;stroke-opacity:.55;stroke-width:2"/>
+      <line x1="838" y1="128" x2="1086" y2="128" style="stroke:#D9772B;stroke-width:3"/>
+      <text class="ns" x="980" y="188" text-anchor="middle" style="fill:#D9772B;font-weight:600">calibrated 80% band</text>
+    </svg>
+    <p class="lede" style="text-align:center;max-width:1010px">We tried a deep LSTM, but on this repetitive, categorical-heavy data
+      <b style="color:var(--ink)">gradient boosting won</b>: three independent boosters, one per quantile, then conformal calibration.</p>
+    <div class="chips">
+      <span class="chip">calendar</span><span class="chip">price lags</span>
+      <span class="chip">spreads · <span class="k">spark / dark</span></span>
+      <span class="chip">spike flags</span><span class="chip">2022 regime</span><span class="chip">weather</span>
+    </div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">14</span></div>
+</section>
+
+<!-- ════════ 15 · MODULE B CALIBRATION ════════ -->
+<section class="slide light accent-b">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Module B · calibration</div>
+    <h2 class="headline">We fixed our own miscalibration</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="grid2 text-img" style="align-items:center">
+    <div class="center-fig">
+      <svg viewBox="0 0 560 230" width="100%" height="240" class="diagram">
+        <text class="ns" x="135" y="20" text-anchor="middle" style="fill:#6B7178;font-weight:600">before CQR</text>
+        <polygon points="20,90 250,90 250,124 20,124" fill="#D9772B" fill-opacity=".14"/>
+        <line x1="20" y1="90" x2="250" y2="90" stroke="#D9772B" stroke-opacity=".55" stroke-width="1.6"/>
+        <line x1="20" y1="124" x2="250" y2="124" stroke="#D9772B" stroke-opacity=".55" stroke-width="1.6"/>
+        <line x1="20" y1="107" x2="250" y2="107" stroke="#D9772B" stroke-width="2"/>
+        <circle cx="45" cy="100" r="4.5" fill="#14181C"/><circle cx="90" cy="74" r="4.5" fill="#C0392B"/>
+        <circle cx="135" cy="116" r="4.5" fill="#14181C"/><circle cx="180" cy="66" r="4.5" fill="#C0392B"/>
+        <circle cx="225" cy="118" r="4.5" fill="#14181C"/>
+        <text class="ns" x="135" y="186" text-anchor="middle" style="fill:#C0392B">actuals pierce the band</text>
+        <text class="ns" x="425" y="20" text-anchor="middle" style="fill:#2E8B57;font-weight:600">after CQR</text>
+        <polygon points="310,60 540,60 540,154 310,154" fill="#D9772B" fill-opacity=".14"/>
+        <line x1="310" y1="60" x2="540" y2="60" stroke="#D9772B" stroke-opacity=".55" stroke-width="1.6"/>
+        <line x1="310" y1="154" x2="540" y2="154" stroke="#D9772B" stroke-opacity=".55" stroke-width="1.6"/>
+        <line x1="310" y1="107" x2="540" y2="107" stroke="#D9772B" stroke-width="2"/>
+        <circle cx="335" cy="100" r="4.5" fill="#14181C"/><circle cx="380" cy="74" r="4.5" fill="#2E8B57"/>
+        <circle cx="425" cy="116" r="4.5" fill="#14181C"/><circle cx="470" cy="66" r="4.5" fill="#2E8B57"/>
+        <circle cx="515" cy="118" r="4.5" fill="#14181C"/>
+        <text class="ns" x="425" y="186" text-anchor="middle" style="fill:#2E8B57">band widened to cover them</text>
+      </svg>
+    </div>
+    <ul class="points">
+      <li>Raw boosters were <b>over-confident</b>: actuals pierced the band.</li>
+      <li>Conformal (CQR) widens it with the <b class="mono">⌈(n+1)(1−α)⌉ / n</b> error quantile, a finite-sample coverage guarantee.</li>
+      <li>Upper-tail miss <b>35.5% → 6.8%</b> (ideal 10%); interval correction down <b>54%</b>.</li>
+      <li>We target an <b>80% band (q10/q90)</b>, not 95%: the extreme tails are rare spikes, so 80% is the robust interval.</li>
+    </ul>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">15</span></div>
+</section>
+
+<!-- ════════ 16 · MODULE B RESULTS ════════ -->
+<section class="slide light accent-b">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Module B · results</div>
+    <h2 class="headline">46% better than seasonal-naive</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack">
+    <div class="bars" style="font-size:18px">
+      <div class="bar"><div class="name">Naive <span class="muted">(t−24h)</span></div><div class="track" style="height:34px"><div class="fill" style="width:95.2%;background:#9AA0A6"></div></div><div class="v" style="font-size:18px">47.6</div></div>
+      <div class="bar"><div class="name">Seasonal naive <span class="muted">(168h)</span></div><div class="track" style="height:34px"><div class="fill" style="width:86.7%;background:#9AA0A6"></div></div><div class="v" style="font-size:18px">43.3</div></div>
+      <div class="bar"><div class="name">LightGBM <span class="muted">+CQR</span></div><div class="track" style="height:34px"><div class="fill" style="width:49.5%;background:#2C7FB8"></div></div><div class="v" style="font-size:18px">24.8</div></div>
+      <div class="bar win"><div class="name"><b>CatBoost +CQR</b> <span class="muted">production</span></div><div class="track" style="height:34px"><div class="fill" style="width:46.6%;background:#D9772B"></div></div><div class="v" style="font-size:18px">23.3</div></div>
+    </div>
+    <div class="figcap" style="text-align:center">test-set MAE (€/MWh), h1–6 · locked 2025 Q1</div>
+    <div class="chips" style="justify-content:center">
+      <span class="chip"><span class="k">MAE 23.29</span> €/MWh</span>
+      <span class="chip">pinball <span class="k">7.93</span></span>
+      <span class="chip">coverage <span class="k">0.82</span></span>
+      <span class="chip">Diebold–Mariano <span class="k">p &lt; 0.001</span></span>
+    </div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">16</span></div>
+</section>
+
+<!-- ════════ 17 · HONEST NEGATIVE ════════ -->
+<section class="slide light accent-b">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Module B · an honest negative</div>
+    <h2 class="headline">Load did not help price</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="grid2 text-img" style="align-items:center">
+    <div class="stat" style="border-top-color:var(--muted);text-align:center;padding:40px 30px">
+      <div class="num" style="font-size:92px;color:var(--muted);line-height:.9">≈ 0%</div>
+      <div class="lbl" style="font-size:18px;margin-top:16px">change in price MAE when Module A's load
+        forecasts are added as features</div>
+    </div>
+    <ul class="points" style="font-size:21px;gap:18px">
+      <li>We wired A into B, measured, and found <b>no material gain</b>.</li>
+      <li>We report the null result rather than bury it.</li>
+      <li class="muted" style="font-size:18px">Load <em>will</em> help, but later, at the dispatch stage.</li>
+    </ul>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">17</span></div>
+</section>
+
+<!-- ════════ DIVIDER 04 ════════ -->
+<section class="slide dark accent-c">
+  <div class="divider">
+    <div class="kicker"><span class="dot"></span>Part 04 · Module C</div>
+    <div class="stage-num">04</div>
+    <div class="stage-title">Battery dispatch</div>
+    <p class="stage-sub">A risk-aware reinforcement-learning agent trading a battery on the
+      propagated price band.</p>
+    <div class="stage-accent"></div>
+  </div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">18</span></div>
+</section>
+
+<!-- ════════ 19 · MODULE C ARCHITECTURE ════════ -->
+<section class="slide light accent-c">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Module C · architecture</div>
+    <h2 class="headline">Environment, agent, reward</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <svg class="diagram" viewBox="0 0 1128 210" width="100%" height="232">
+      <defs>
+        <marker id="dC" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#2E8B57"/></marker>
+        <marker id="dM" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#6B7178"/></marker>
+      </defs>
+      <line x1="318" y1="95" x2="356" y2="95" stroke="#6B7178" stroke-width="2.5" marker-end="url(#dM)"/>
+      <line x1="520" y1="95" x2="558" y2="95" stroke="#2E8B57" stroke-width="2.5" marker-end="url(#dC)"/>
+      <line x1="712" y1="95" x2="750" y2="95" stroke="#6B7178" stroke-width="2.5" marker-end="url(#dM)"/>
+      <path d="M832,135 C832,196 250,196 158,150" fill="none" stroke="#6B7178" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#dM)"/>
+      <rect x="461" y="179" width="78" height="17" rx="3" fill="#F5F1E8"/>
+      <text class="ns" x="500" y="191" text-anchor="middle">new state</text>
+      <g><rect x="10" y="48" width="308" height="100" rx="13" fill="#6B7178" fill-opacity=".08" stroke="#6B7178" stroke-width="2"/>
+        <text class="nt" x="164" y="80" text-anchor="middle">Observation</text>
+        <text class="ns" x="164" y="103" text-anchor="middle">SoC · calendar · last price</text>
+        <text class="ns" x="164" y="123" text-anchor="middle" style="fill:#14181C">B price q··  (+ A load in B+A)</text></g>
+      <g><rect x="356" y="55" width="164" height="80" rx="13" fill="#2E8B57" fill-opacity=".12" stroke="#2E8B57" stroke-width="2"/>
+        <text class="nt" x="438" y="91" text-anchor="middle">Agent</text><text class="ns" x="438" y="111" text-anchor="middle">policy &#960;(a|s)</text></g>
+      <g><rect x="558" y="55" width="154" height="80" rx="13" fill="#14181C" fill-opacity=".05" stroke="#14181C" stroke-width="2"/>
+        <text class="nt" x="635" y="84" text-anchor="middle">Action</text><text class="ns" x="635" y="104" text-anchor="middle">charge · discharge</text><text class="ns" x="635" y="122" text-anchor="middle">· hold</text></g>
+      <g><rect x="750" y="55" width="160" height="80" rx="13" fill="#D9772B" fill-opacity=".10" stroke="#D9772B" stroke-width="2"/>
+        <text class="nt" x="830" y="91" text-anchor="middle">Battery</text><text class="ns" x="830" y="111" text-anchor="middle">100 MWh · 50 MW</text></g>
+    </svg>
+    <div class="eq" style="margin-top:4px">
+      <span class="lab">reward</span>&nbsp; r&#8348; = <span class="accent">p&#8348; · a&#8348; · Δt</span>
+      <span class="lab">(step profit)</span> − λ · max(0, −CVaR&#8325;<tspan>%</tspan>) ,&nbsp; λ = 0.1
+    </div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">19</span></div>
+</section>
+
+<!-- ════════ 20 · MODULE C · THE TWO AGENTS ════════ -->
+<section class="slide light accent-c">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Module C · the agents</div>
+    <h2 class="headline">Two agents, trained independently</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <p class="lede" style="text-align:center;max-width:1040px;margin-top:-2px">An agent observes the state, takes an action,
+      and learns from the reward. We train <b style="color:var(--ink)">two</b> of them and <b style="color:var(--ink)">compare</b> them; they never interact.</p>
+    <svg class="diagram" viewBox="0 0 1128 196" width="100%" height="206">
+      <defs>
+        <marker id="gC" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#2E8B57"/></marker>
+        <marker id="gM" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#6B7178"/></marker>
+      </defs>
+      <path d="M222,82 C268,60 282,52 318,48" fill="none" stroke="#6B7178" stroke-width="2.4" marker-end="url(#gM)"/>
+      <path d="M222,110 C268,132 282,140 318,144" fill="none" stroke="#6B7178" stroke-width="2.4" marker-end="url(#gM)"/>
+      <line x1="540" y1="48" x2="600" y2="48" stroke="#2E8B57" stroke-width="2.4" marker-end="url(#gC)"/>
+      <line x1="540" y1="144" x2="600" y2="144" stroke="#2E8B57" stroke-width="2.4" marker-end="url(#gC)"/>
+      <g><rect x="22" y="61" width="200" height="70" rx="13" fill="#6B7178" fill-opacity=".08" stroke="#6B7178" stroke-width="2"/>
+        <text class="nt" x="122" y="92" text-anchor="middle">Observation</text><text class="ns" x="122" y="112" text-anchor="middle">price band + state</text></g>
+      <g><rect x="318" y="18" width="222" height="62" rx="13" fill="#2C7FB8" fill-opacity=".10" stroke="#2C7FB8" stroke-width="2"/>
+        <text class="nt" x="429" y="44" text-anchor="middle" style="fill:#2C7FB8">PPO</text><text class="ns" x="429" y="64" text-anchor="middle">on-policy · stable</text></g>
+      <g><rect x="318" y="114" width="222" height="62" rx="13" fill="#2E8B57" fill-opacity=".12" stroke="#2E8B57" stroke-width="2"/>
+        <text class="nt" x="429" y="140" text-anchor="middle" style="fill:#2E8B57">SAC</text><text class="ns" x="429" y="160" text-anchor="middle">off-policy · higher profit</text></g>
+      <g><rect x="600" y="18" width="232" height="62" rx="13" fill="#14181C" fill-opacity=".05" stroke="#14181C" stroke-width="2"/>
+        <text class="nt" x="716" y="43" text-anchor="middle">Own action</text><text class="ns" x="716" y="63" text-anchor="middle">charge · discharge · hold</text></g>
+      <g><rect x="600" y="114" width="232" height="62" rx="13" fill="#14181C" fill-opacity=".05" stroke="#14181C" stroke-width="2"/>
+        <text class="nt" x="716" y="139" text-anchor="middle">Own action</text><text class="ns" x="716" y="159" text-anchor="middle">charge · discharge · hold</text></g>
+      <text class="al" x="978" y="92" text-anchor="middle" fill="#6B7178">two separate</text>
+      <text class="al" x="978" y="110" text-anchor="middle" fill="#6B7178">policies</text>
+    </svg>
+    <div class="chips" style="justify-content:center">
+      <span class="chip"><span class="k">PPO</span> conservative: modest but reliable</span>
+      <span class="chip"><span class="k">SAC</span> aggressive: higher profit, wider swings</span>
+      <span class="chip">200k training steps</span>
+      <span class="chip">78-dim observation</span>
+    </div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">20</span></div>
+</section>
+
+<!-- ════════ 21 · MODULE C RESULTS ════════ -->
+<section class="slide light accent-c">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Module C · results</div>
+    <h2 class="headline">SAC beats the perfect-foresight benchmark</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <svg viewBox="0 0 1000 360" width="100%" height="362" class="diagram">
+      <g stroke="#E3DCCD" stroke-width="1">
+        <line x1="120" y1="63.5" x2="960" y2="63.5"/><line x1="120" y1="119.2" x2="960" y2="119.2"/>
+        <line x1="120" y1="175" x2="960" y2="175"/><line x1="120" y1="230.8" x2="960" y2="230.8"/>
+      </g>
+      <line x1="120" y1="286.5" x2="960" y2="286.5" stroke="#9AA0A6" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <g font-family="PlexMono" font-size="13" fill="#6B7178" text-anchor="end">
+        <text x="108" y="68">€20k</text><text x="108" y="123.7">€15k</text><text x="108" y="179.5">€10k</text>
+        <text x="108" y="235.3">€5k</text><text x="108" y="291">€0</text>
+      </g>
+      <!-- PPO -->
+      <g>
+        <rect x="282" y="191.4" width="76" height="75.1" rx="8" fill="#2C7FB8" fill-opacity=".16" stroke="#2C7FB8" stroke-width="2"/>
+        <line x1="282" y1="231.3" x2="358" y2="231.3" stroke="#2C7FB8" stroke-width="3"/>
+        <circle cx="320" cy="228.9" r="6" fill="#2C7FB8"/>
+        <path d="M314,292.2 L326,292.2 L320,302.2 Z" fill="#C0392B"/>
+        <text x="320" y="183" text-anchor="middle" font-family="PlexMono" font-weight="600" font-size="16" fill="#14181C">€5,166</text>
+        <text x="320" y="344" text-anchor="middle" font-size="17" fill="#3A4047">PPO</text>
+      </g>
+      <!-- Greedy benchmark -->
+      <g>
+        <rect x="502" y="89.2" width="76" height="138.8" rx="8" fill="#6B7178" fill-opacity=".14" stroke="#6B7178" stroke-width="2"/>
+        <line x1="502" y1="146.6" x2="578" y2="146.6" stroke="#6B7178" stroke-width="3"/>
+        <circle cx="540" cy="158.6" r="6" fill="#6B7178"/>
+        <path d="M534,283.3 L546,283.3 L540,293.3 Z" fill="#C0392B"/>
+        <text x="540" y="81" text-anchor="middle" font-family="PlexMono" font-weight="600" font-size="16" fill="#14181C">€11,474</text>
+        <text x="540" y="344" text-anchor="middle" font-size="17" fill="#3A4047">Greedy <tspan font-size="13" fill="#6B7178">benchmark</tspan></text>
+      </g>
+      <!-- SAC ours -->
+      <g>
+        <rect x="722" y="40.9" width="76" height="200.1" rx="8" fill="#2E8B57" fill-opacity=".16" stroke="#2E8B57" stroke-width="2"/>
+        <line x1="722" y1="142.3" x2="798" y2="142.3" stroke="#2E8B57" stroke-width="3"/>
+        <circle cx="760" cy="140.9" r="6" fill="#2E8B57"/>
+        <path d="M754,301.7 L766,301.7 L760,311.7 Z" fill="#C0392B"/>
+        <text x="760" y="32" text-anchor="middle" font-family="PlexMono" font-weight="600" font-size="16" fill="#14181C">€13,054</text>
+        <text x="760" y="344" text-anchor="middle" font-size="17" fill="#2E8B57" font-weight="600">SAC <tspan font-size="13">ours</tspan></text>
+      </g>
+    </svg>
+    <div class="legend" style="justify-content:center;font-size:13.5px">
+      <span>box = ±1σ</span><span>─ median</span><span>● mean</span>
+      <span style="color:#C0392B">▼ CVaR (worst-5% tail)</span><span>– – break-even</span>
+    </div>
+    <div class="figcap" style="text-align:center">Profit per 24-h episode · 200 test episodes (2025 Q1). <b>PPO is the most stable; SAC earns the most, above the benchmark on forecasts alone.</b></div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">21</span></div>
+</section>
+
+<!-- ════════ 21 · MODULE C ABLATION ════════ -->
+<section class="slide light accent-c">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Module C · ablation</div>
+    <h2 class="headline">Where each forecast earns its keep</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <div class="legend" style="margin-bottom:6px"><span><i style="background:#2C7FB8"></i>PPO</span><span><i style="background:#2E8B57"></i>SAC</span></div>
+    <div class="vchart" style="height:262px;gap:64px;margin-top:4px">
+      <div class="vgroup"><div class="vbars">
+        <div class="vbar" style="height:77px;background:#2C7FB8;width:62px"><span class="v">4.9k</span></div>
+        <div class="vbar" style="height:122px;background:#2E8B57;width:62px"><span class="v">7.7k</span></div>
+      </div><div class="vlabel">raw<span class="s">no forecast</span></div></div>
+      <div class="vgroup"><div class="vbars">
+        <div class="vbar" style="height:85px;background:#2C7FB8;width:62px"><span class="v">5.4k</span></div>
+        <div class="vbar" style="height:188px;background:#2E8B57;width:62px"><span class="v">11.9k</span></div>
+      </div><div class="vlabel">+ B<span class="s">price band</span></div></div>
+      <div class="vgroup"><div class="vbars">
+        <div class="vbar" style="height:88px;background:#2C7FB8;width:62px"><span class="v">5.6k</span></div>
+        <div class="vbar" style="height:210px;background:#2E8B57;width:62px"><span class="v">13.3k</span></div>
+      </div><div class="vlabel">+ B + A<span class="s">price + load</span></div></div>
+    </div>
+    <div class="chips" style="justify-content:center">
+      <span class="chip">B forecasts → SAC <span class="k">+55%</span></span>
+      <span class="chip">+ A load → <span class="k">+€1,412</span> (+12%)</span>
+      <span class="chip">Sharpe <span class="k">1.43 → 1.72</span></span>
+    </div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">22</span></div>
+</section>
+
+<!-- ════════ DIVIDER 05 ════════ -->
+<section class="slide dark accent-data">
+  <div class="divider">
+    <div class="kicker"><span class="dot"></span>Part 05</div>
+    <div class="stage-num">05</div>
+    <div class="stage-title">Synthesis</div>
+    <p class="stage-sub">What calibrated uncertainty, propagated end to end, is ultimately worth.</p>
+    <div class="stage-accent"></div>
+  </div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">23</span></div>
+</section>
+
+
+<!-- ════════ 24 · CONCLUSION ════════ -->
+<section class="slide light accent-data">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Conclusion</div>
+    <h2 class="headline">Uncertainty, propagated, becomes profit</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="stack c">
+    <div class="statgrid">
+      <div class="stat" style="border-top-color:var(--b)"><div class="num">23.29<span class="u"> €/MWh</span></div><div class="lbl">price MAE · <b>−46%</b> vs. seasonal-naive</div></div>
+      <div class="stat" style="border-top-color:var(--c)"><div class="num">€13,054</div><div class="lbl">SAC <b>mean</b> profit / episode, above the benchmark</div></div>
+      <div class="stat" style="border-top-color:var(--imp)"><div class="num">53.9<span class="u">%</span></div><div class="lbl">of imputed cells refined · <b>0</b> violations</div></div>
+    </div>
+    <p class="lede" style="text-align:center;max-width:1000px;font-size:22px;margin-top:6px">
+      Calibrated quantiles, carried end to end, turn forecasts into <b style="color:var(--ink)">dispatch profit</b>.</p>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">24</span></div>
+</section>
+
+<!-- ════════ 25 · THANK YOU ════════ -->
+<section class="slide dark accent-data">
+  <div class="title-wrap">
+    <div class="kicker"><span class="dot"></span>Energy Market Intelligence System</div>
+    <h1 class="title-main">Thank&nbsp;you.</h1>
+    <p class="title-sub" style="margin-top:26px">Do you have any questions?</p>
+  </div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">25</span></div>
+</section>
+
+<!-- ════════ 26 · APPENDIX ════════ -->
+<section class="slide light accent-data">
+  <div class="head">
+    <div class="kicker"><span class="dot"></span>Appendix</div>
+    <h2 class="headline sm">Details &amp; references</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="body"><div class="grid2" style="align-items:start">
+    <div>
+      <table class="appx">
+        <thead><tr><th>Split</th><th>Period</th><th>Hours</th></tr></thead>
+        <tbody>
+          <tr><td>train</td><td>2019–2023</td><td class="n">43,824</td></tr>
+          <tr><td>val</td><td>2024</td><td class="n">8,784</td></tr>
+          <tr><td>test</td><td>2025 Q1 · locked</td><td class="n">2,160</td></tr>
+        </tbody>
+      </table>
+      <ul class="points" style="margin-top:20px;font-size:16px;gap:9px">
+        <li>Imputer: SAITS / Glocal-IB · 4 layers, d=512, 168-h windows.</li>
+        <li>Module B: CatBoost depth 8/6/8, ℓ₂ 1/3/1; CQR.</li>
+        <li>Module C: PPO &amp; SAC (SB3), 78-dim obs, 200k steps; agents trained independently.</li>
+        <li>Bands target <b>80% (q10/q90)</b>, not 95%: extreme tails are rare spikes.</li>
+        <li>Time-series CV with a 24-h gap (no lag-24 leakage).</li>
+      </ul>
+    </div>
+    <div>
+      <div class="figcap" style="margin:0 0 10px;color:var(--ink);font-weight:600">Methods &amp; data</div>
+      <ul class="points" style="font-size:15.5px;gap:8px">
+        <li>ENTSO-E Transparency · Open-Meteo · Yahoo / Energy-Charts.</li>
+        <li>SAITS (Du et al., 2023) · Glocal-IB.</li>
+        <li>Conformal Quantile Regression (Romano 2019; Barber 2021).</li>
+        <li>PPO (Schulman 2017) · SAC (Haarnoja 2018) · CVaR (Rockafellar &amp; Uryasev 2000).</li>
+        <li class="muted">PyTorch · PyPOTS · CatBoost · scikit-learn · SB3 · Gymnasium.</li>
+      </ul>
+    </div>
+  </div></div>
+  <div class="footer"><span class="brand">Energy Market Intelligence System</span><span class="pg">26</span></div>
+</section>
+
+</body>
+</html>

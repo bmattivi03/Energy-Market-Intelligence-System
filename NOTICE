@@ -1,0 +1,30 @@
+Energy Market Intelligence System
+Copyright (c) 2026 Brando Mattivi, Roger Feliu, Daniil Mezentsev
+
+This product includes software developed by the project team (released under
+the MIT License, see LICENSE) and the third-party component listed below.
+
+================================================================================
+Third-party component: Glocal-IB (vendored, modified)
+================================================================================
+
+Directory:   GlocalIB/
+Upstream:     "Glocal Information Bottleneck for Time Series Imputation"
+              Jie Yang, Kexin Zhang, Guibin Zhang, Philip S. Yu, Kaize Ding.
+              NeurIPS 2025. arXiv:2510.04910.
+License:      MIT (see GlocalIB/LICENSE)
+
+The code in GlocalIB/ is a vendored copy of the Glocal-IB / SAITS imputation
+model, derived from the fork github.com/bmattivi03/GlocalIB_Improvements. It has
+been modified by the project team with the following additions, integrated into
+the upstream model.py / core.py:
+
+  - mod_e: a Variational Information Bottleneck (VIB) regulariser, active at
+    training time.
+  - mod_p: a Self-Supervised Held-out Blend (SSHB), active at inference time.
+  - physical_loss.py and the core.py auxiliary-loss hook: post-hoc physical
+    constraints for the energy-market panel.
+
+All upstream copyright and the MIT terms in GlocalIB/LICENSE are retained. If
+you use the imputation model in academic work, please cite the original paper
+(see CITATION.cff and GlocalIB/README.md).
