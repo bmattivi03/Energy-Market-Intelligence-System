@@ -1,14 +1,14 @@
-"""Module B - day-ahead electricity price forecasting.
+"""Module B — day-ahead electricity price forecasting.
 
 Flat 3-file layout:
 
-* :mod:`module_b.models` - base class, baselines, classical wrappers.
-* :mod:`module_b.features` - feature transforms, REGISTRY, the supervised
+* :mod:`module_b.models` — base class, baselines, classical wrappers.
+* :mod:`module_b.features` — feature transforms, REGISTRY, the supervised
   (origin, horizon) layout, and horizon-group helpers.
-* :mod:`module_b.evaluation` - point/probabilistic metrics, segmentation,
+* :mod:`module_b.evaluation` — point/probabilistic metrics, segmentation,
   Diebold-Mariano, bootstrap, and conformal calibration wrappers.
 
-Notebooks in ``notebooks/module_b/`` (B1-B3, B5-B6) drive every experiment.
+Notebooks in ``notebooks/module_b/`` (B1–B3, B5–B6) drive every experiment.
 This package only provides reusable building blocks.
 """
 

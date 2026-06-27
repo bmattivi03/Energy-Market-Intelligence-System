@@ -1,6 +1,6 @@
 """Merge 6 raw parquets into data/processed/emis_raw.parquet.
 
-Output: hourly UTC DatetimeIndex, 47 columns (no net_import_* - those are
+Output: hourly UTC DatetimeIndex, 47 columns (no net_import_* — those are
 recomputed by impute.py after imputation for flow-consistency).
 
 Column count:

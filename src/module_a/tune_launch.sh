@@ -27,7 +27,7 @@ echo "Storage: ${STORAGE}"
 echo ""
 
 # Pre-initialise the SQLite DB with a single process so all workers find
-# the schema already created - avoids the race condition on create_all.
+# the schema already created — avoids the race condition on create_all.
 echo "Initialising Optuna study..."
 PYTHONPATH=${PYTHONPATH_VAL} python - <<EOF
 import optuna

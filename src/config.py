@@ -1,10 +1,10 @@
-"""Central configuration - single source of truth for module hyperparameters.
+"""Central configuration — single source of truth for module hyperparameters.
 
 Frozen dataclasses collect the defaults that were previously scattered across
 each module's ``argparse`` and constructor defaults. CLIs read their argparse
 defaults from these classes so there is exactly one place to change a value.
 
-Split bounds and the forecast HORIZON / LOOKBACK are *not* re-hardcoded here -
+Split bounds and the forecast HORIZON / LOOKBACK are *not* re-hardcoded here —
 they are imported from ``data.schemas`` / ``data.splits`` which remain the
 authoritative source.
 """
@@ -57,7 +57,7 @@ class ModuleBConfig:
     early_stopping: int = 30
     lr: float = 0.05
     cqr_alpha: float = 0.20
-    # Production feature bundles (no load_quantiles by default - v1 standalone).
+    # Production feature bundles (no load_quantiles by default — v1 standalone).
     bundles: tuple[str, ...] = (
         "calendar", "lags", "fundamentals", "spike", "regime", "weather",
     )
@@ -82,7 +82,7 @@ class ModuleCConfig:
     lambda_risk: float = 0.1
 
 
-# Convenience singletons - import these for read-only access.
+# Convenience singletons — import these for read-only access.
 DATA = DataConfig()
 MODULE_A = ModuleAConfig()
 MODULE_B = ModuleBConfig()

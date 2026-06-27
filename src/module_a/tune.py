@@ -11,7 +11,7 @@ PYTHONPATH=src python -m module_a.tune --n-trials 40 --epochs 100 --patience 15
 # Multi-GPU: launch workers (each does 5 trials), then collect
 bash src/module_a/tune_launch.sh   # see that script for details
 
-# After all workers finish - retrain best config + export parquet
+# After all workers finish — retrain best config + export parquet
 PYTHONPATH=src python -m module_a.tune --n-trials 0 --storage sqlite:///optuna_module_a.db
 """
 

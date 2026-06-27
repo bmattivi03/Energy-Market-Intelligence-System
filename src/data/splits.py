@@ -2,9 +2,9 @@
 
 Two strategies, both aware of horizon-induced leakage:
 
-* :func:`rolling_origin_folds` - each fold has a fixed-size training window
+* :func:`rolling_origin_folds` — each fold has a fixed-size training window
   followed by a contiguous validation window, sliding forward.
-* :func:`expanding_window_folds` - each fold expands the training window from
+* :func:`expanding_window_folds` — each fold expands the training window from
   a common origin; validation window slides forward by ``val_size``.
 
 Both insert a ``gap`` between train and val to prevent the model from learning
@@ -21,7 +21,7 @@ from typing import Iterator
 import pandas as pd
 
 HORIZON  = 24   # day-ahead forecast horizon (hours)
-LOOKBACK = 168  # one week - default sequence input window for LSTM models
+LOOKBACK = 168  # one week — default sequence input window for LSTM models
 
 
 @dataclass(frozen=True)

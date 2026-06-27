@@ -1,4 +1,4 @@
-"""End-to-end Module C integration tests - no trained checkpoints, no network.
+"""End-to-end Module C integration tests — no trained checkpoints, no network.
 
 1. A full random-policy episode driving a real `BatteryEnv` built from the
    synthetic `price_df`, asserting the Gymnasium contract end to end.

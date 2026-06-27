@@ -1,24 +1,34 @@
-# Python
+.env
+.cache/
+.cache.sqlite
 __pycache__/
-*.pyc
-*.egg-info/
+*.parquet
+data/raw/*
+data/processed/*
+data/splits/*
+.DS_Store
+
+# Build / run artifacts
+catboost_info/
+test_prices.png
+checkpoints/**/tensorboard/
 .ipynb_checkpoints/
 .pytest_cache/
 
-# OS / editors
-.DS_Store
-.idea/
-.vscode/
-.venv/
-venv/
+# Unrelated files accidentally committed (not energy-market data)
+data/images/
+data/photos/
+data/cities.txt
+data/diary.json
+data/file1.txt
+data/file2.txt
+data/file3.txt
+data/wardrobe.json
+data/worldcities.csv
 
-# Run artifacts and caches
-catboost_info/
-.cache.sqlite
-*.log
+# Pipeline run logs (transient)
+reports/logs/
 
-# Secrets (use .env.example as the template)
-.env
-
-# NOTE: data/, checkpoints/, and *.parquet are intentionally tracked so the
-# shipped artifacts reproduce the headline results without re-running ingestion.
+# module_joint experiment checkpoints (reproducible, large)
+checkpoints/module_joint/
+checkpoints/module_c_joint/

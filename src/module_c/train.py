@@ -2,11 +2,11 @@
 
 Flat 3-level structure mirroring module_b.models:
 
-* :class:`BaseAgent` - ABC enforcing act / train / save / load.
-* :class:`PPOAgent` / :class:`SACAgent` - thin stable-baselines3 wrappers.
-* :func:`evaluate_agent` - standalone evaluation returning :class:`EvalResult`.
-* :class:`TrainConfig` - all hyperparameters in one dataclass.
-* :data:`AGENT_REGISTRY` + :func:`build_agent` - algo lookup by name.
+* :class:`BaseAgent` — ABC enforcing act / train / save / load.
+* :class:`PPOAgent` / :class:`SACAgent` — thin stable-baselines3 wrappers.
+* :func:`evaluate_agent` — standalone evaluation returning :class:`EvalResult`.
+* :class:`TrainConfig` — all hyperparameters in one dataclass.
+* :data:`AGENT_REGISTRY` + :func:`build_agent` — algo lookup by name.
 """
 
 from __future__ import annotations
@@ -112,7 +112,7 @@ class PPOAgent(BaseAgent):
         # Apply lambda_risk from config to the caller's env too (keeps them in sync).
         env._shaper.lambda_risk = config.lambda_risk
 
-        # PPO needs n_envs *independent* instances - lambda: env would hand the same
+        # PPO needs n_envs *independent* instances — lambda: env would hand the same
         # object to every worker, causing all of them to race over shared state.
         _df = env._df
         _cfg = env._cfg
@@ -138,7 +138,7 @@ class PPOAgent(BaseAgent):
             seed=config.seed,
             verbose=0,
             # MlpPolicy runs faster on CPU than MPS/GPU, and SB3 on Apple MPS
-            # segfaults during training - pin CPU.
+            # segfaults during training — pin CPU.
             device="cpu",
             **(config.policy_kwargs or {}),
         )

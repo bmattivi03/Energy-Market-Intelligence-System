@@ -200,7 +200,7 @@ def test_missing_forecast_columns_are_zero_filled(price_df):
     # Still produces a full 78-dim observation...
     assert obs.shape == (78,)
     # ...and the 72 forecast slots (indices 6..78) are z-scored zeros, i.e.
-    # (0 - price_mean) / price_std - all identical.
+    # (0 - price_mean) / price_std — all identical.
     forecast_block = obs[6:78]
     assert np.all(forecast_block == forecast_block[0])
 

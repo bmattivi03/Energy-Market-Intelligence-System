@@ -1,9 +1,9 @@
 """Module C ablation study: Raw vs B-only vs B+A.
 
 Three observation modes:
-  raw   - price only (no forecast columns, zeroed)
-  b     - Module B price quantile forecasts (78-dim, current setup)
-  ba    - Module B price forecasts + Module A load_q50 h1/6/12/24 (82-dim)
+  raw   — price only (no forecast columns, zeroed)
+  b     — Module B price quantile forecasts (78-dim, current setup)
+  ba    — Module B price forecasts + Module A load_q50 h1/6/12/24 (82-dim)
 
 For each mode trains PPO (200k) and SAC (200k + 500k if --full).
 Saves checkpoints, produces comparison plots and report.
@@ -64,7 +64,7 @@ def _build_b_price_df(raw, cqr, X, price_col):
 
 
 def _build_raw_price_df(raw, price_col):
-    """price_df with only 'price' - forecast cols zeroed by env."""
+    """price_df with only 'price' — forecast cols zeroed by env."""
     df = raw[[price_col]].copy().rename(columns={price_col: "price"})
     return df.dropna()
 
@@ -308,7 +308,7 @@ def main():
     }
     _plot_comparison(
         ablation_profits,
-        f"Module C ablation: observation mode - SAC {best_sac_steps//1000}k (2025 Q1 test)",
+        f"Module C ablation: observation mode — SAC {best_sac_steps//1000}k (2025 Q1 test)",
         REPORTS_DIR / "module_c_ablation_sac.png",
     )
 
@@ -335,9 +335,9 @@ def main():
     verdict = (
         f"B+A mean profit {ba_mean:.0f} EUR vs B-only {b_mean:.0f} EUR "
         f"({'+' if a_helps else ''}{ba_mean - b_mean:.0f}). "
-        + ("Module A load quantiles HELP - keep A→C wired (extra_cols)."
+        + ("Module A load quantiles HELP — keep A→C wired (extra_cols)."
            if a_helps else
-           "Module A load quantiles do NOT help - leave C on B-only (default).")
+           "Module A load quantiles do NOT help — leave C on B-only (default).")
     )
     print("\n" + verdict)
 

@@ -86,9 +86,9 @@ def report(r: dict):
 
 
 # ── Date windows ────────────────────────────────────────────────────────────
-W_RECENT  = ("202301010000", "202302010000")   # Jan 2023 - after Ukraine war, before nuclear shutdown
-W_OLD     = ("202001010000", "202002010000")   # Jan 2020 - pandemic year
-W_NUCLEAR = ("202304010000", "202305010000")   # April 2023 - month of nuclear shutdown
+W_RECENT  = ("202301010000", "202302010000")   # Jan 2023 — after Ukraine war, before nuclear shutdown
+W_OLD     = ("202001010000", "202002010000")   # Jan 2020 — pandemic year
+W_NUCLEAR = ("202304010000", "202305010000")   # April 2023 — month of nuclear shutdown
 
 if not TOKEN:
     print("[CRITICAL] ENTSOE_TOKEN not set. Export it before running.")
@@ -99,7 +99,7 @@ print(f"Base URL: {BASE_URL}")
 
 
 # ──────────────────────────────────────────────────────────────────────────
-section("BASELINE - A44 Prices & A65 Load (Jan 2023)")
+section("BASELINE — A44 Prices & A65 Load (Jan 2023)")
 # ──────────────────────────────────────────────────────────────────────────
 
 call("A44 prices (DE_LU_MARKET)", {
@@ -120,7 +120,7 @@ call("A65 load (DE_LU)", {
 
 
 # ──────────────────────────────────────────────────────────────────────────
-section("A75 GENERATION - Testing problem PSR types")
+section("A75 GENERATION — Testing problem PSR types")
 # ──────────────────────────────────────────────────────────────────────────
 
 GEN_BASE = {
@@ -130,29 +130,29 @@ GEN_BASE = {
     "out_Domain":   DE_LU,
 }
 
-# B04 fossil gas - should always have data
+# B04 fossil gas — should always have data
 call("A75 B04 fossil_gas (Jan 2023, should be full)", {**GEN_BASE, "psrType": "B04",
      "periodStart": W_RECENT[0], "periodEnd": W_RECENT[1]})
 
-# B03 fossil_coal_gas - was empty for ~2020-2022 in the big run
+# B03 fossil_coal_gas — was empty for ~2020-2022 in the big run
 call("A75 B03 fossil_coal_gas (Jan 2020, was EMPTY)", {**GEN_BASE, "psrType": "B03",
      "periodStart": W_OLD[0], "periodEnd": W_OLD[1]})
 call("A75 B03 fossil_coal_gas (Jan 2023, had data)", {**GEN_BASE, "psrType": "B03",
      "periodStart": W_RECENT[0], "periodEnd": W_RECENT[1]})
 
-# B14 nuclear - should be empty from April 2023
+# B14 nuclear — should be empty from April 2023
 call("A75 B14 nuclear (Jan 2023, last operating months)", {**GEN_BASE, "psrType": "B14",
      "periodStart": W_RECENT[0], "periodEnd": W_RECENT[1]})
-call("A75 B14 nuclear (Apr 2023, shutdown month - expect EMPTY)", {**GEN_BASE, "psrType": "B14",
+call("A75 B14 nuclear (Apr 2023, shutdown month — expect EMPTY)", {**GEN_BASE, "psrType": "B14",
      "periodStart": W_NUCLEAR[0], "periodEnd": W_NUCLEAR[1]})
 
-# B16 solar - sanity check
+# B16 solar — sanity check
 call("A75 B16 solar (Jan 2023)", {**GEN_BASE, "psrType": "B16",
      "periodStart": W_RECENT[0], "periodEnd": W_RECENT[1]})
 
 
 # ──────────────────────────────────────────────────────────────────────────
-section("A11 CROSS-BORDER - DE_LU zone (Jan 2023)")
+section("A11 CROSS-BORDER — DE_LU zone (Jan 2023)")
 # ──────────────────────────────────────────────────────────────────────────
 
 CB_BASE = {"documentType": "A11"}
@@ -183,7 +183,7 @@ call("A11 DELU→CH (Jan 2023)", {**CB_BASE,
 
 
 # ──────────────────────────────────────────────────────────────────────────
-section("A11 CROSS-BORDER - DE_AT_LU zone (expect all EMPTY)")
+section("A11 CROSS-BORDER — DE_AT_LU zone (expect all EMPTY)")
 # ──────────────────────────────────────────────────────────────────────────
 
 call("A11 FR→DEATLU (Jan 2023, expect EMPTY)", {**CB_BASE,
@@ -195,11 +195,11 @@ call("A11 AT→DEATLU (Jan 2023, expect EMPTY)", {**CB_BASE,
 
 
 # ──────────────────────────────────────────────────────────────────────────
-section("FR CROSS-BORDER DEEP DIVE - why 84% NaN?")
+section("FR CROSS-BORDER DEEP DIVE — why 84% NaN?")
 # ──────────────────────────────────────────────────────────────────────────
 
 # Test with a one-week window to see resolution
-call("A11 FR→DELU (1 week, Jan 2023 - check resolution)", {**CB_BASE,
+call("A11 FR→DELU (1 week, Jan 2023 — check resolution)", {**CB_BASE,
      "in_Domain": FR_EIC, "out_Domain": DE_LU,
      "periodStart": "202301010000", "periodEnd": "202301080000"})
 
@@ -207,7 +207,7 @@ call("A11 DELU→FR (1 week, Jan 2023)", {**CB_BASE,
      "in_Domain": DE_LU, "out_Domain": FR_EIC,
      "periodStart": "202301010000", "periodEnd": "202301080000"})
 
-# Also test Jan 2020 - early in dataset
+# Also test Jan 2020 — early in dataset
 call("A11 FR→DELU (Jan 2020)", {**CB_BASE,
      "in_Domain": FR_EIC, "out_Domain": DE_LU,
      "periodStart": W_OLD[0], "periodEnd": W_OLD[1]})
@@ -224,14 +224,14 @@ print("\n")
 ok    = sum(1 for r in RESULTS if r["status"] == "OK")
 empty = sum(1 for r in RESULTS if r["status"] == "EMPTY")
 fail  = sum(1 for r in RESULTS if r["status"] not in ("OK", "EMPTY"))
-print(f"Total: {len(RESULTS)} calls - OK={ok}  EMPTY={empty}  FAIL/ERROR={fail}")
+print(f"Total: {len(RESULTS)} calls — OK={ok}  EMPTY={empty}  FAIL/ERROR={fail}")
 
 # For the FR deep dive, print the full raw XML of the 1-week window
 # so we can see the actual resolution and data structure
 fr_deep = next((r for r in RESULTS if "1 week" in r["label"] and "FR→DELU" in r["label"]), None)
 if fr_deep and fr_deep["status"] == "OK":
     print("\n" + "─" * 65)
-    print("RAW XML PREVIEW - FR→DELU 1-week (first 2000 chars):")
+    print("RAW XML PREVIEW — FR→DELU 1-week (first 2000 chars):")
     print("─" * 65)
     # Re-fetch to get full body (we only stored preview earlier)
     p = {

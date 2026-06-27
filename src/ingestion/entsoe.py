@@ -125,11 +125,11 @@ def fetch_range(start_year: int, end_year: int, doc_type: str, extra_params: dic
                 all_dfs.append(df)
             else:
                 msg = f"WARN empty_response doc_type={doc_type} start={params['periodStart']} end={params['periodEnd']} extra={extra_params}"
-                print(f"  [WARN] Empty response for chunk {params['periodStart']}-{params['periodEnd']}")
+                print(f"  [WARN] Empty response for chunk {params['periodStart']}–{params['periodEnd']}")
                 _log_failure(msg)
         else:
             msg = f"WARN fetch_failed doc_type={doc_type} start={params['periodStart']} end={params['periodEnd']} extra={extra_params}"
-            print(f"  [WARN] Fetch failed for chunk {params['periodStart']}-{params['periodEnd']}")
+            print(f"  [WARN] Fetch failed for chunk {params['periodStart']}–{params['periodEnd']}")
             _log_failure(msg)
 
         current_start = current_end + timedelta(minutes=1)

@@ -1,6 +1,6 @@
 """Canonical column lists, dtypes, and constants for the EMIS dataset.
 
-Single source of truth - every other module imports from here so that adding
+Single source of truth — every other module imports from here so that adding
 or renaming a column requires changing exactly one file.
 """
 

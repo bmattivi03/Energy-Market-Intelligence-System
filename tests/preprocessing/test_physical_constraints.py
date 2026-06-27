@@ -45,7 +45,7 @@ def test_clip_generation_removes_negatives() -> None:
 
 
 def test_enforce_solar_night_zero_zeroes_at_midnight() -> None:
-    # June 1 in Germany - midnight UTC = local 02:00, sun well below horizon
+    # June 1 in Germany — midnight UTC = local 02:00, sun well below horizon
     idx = pd.date_range("2024-06-01", periods=24, freq="h", tz="UTC")
     df = pd.DataFrame({"gen_solar": np.full(24, 1000.0)}, index=idx)
     out = enforce_solar_night_zero(df)

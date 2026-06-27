@@ -6,7 +6,7 @@ the recovered timestamps, values, and that the namespace auto-detection
 (``root.tag.split('}')[0]``) works for at least two different root
 tags / namespace URIs.
 
-No network is ever touched here - every input is a raw string built inline.
+No network is ever touched here — every input is a raw string built inline.
 """
 
 import pandas as pd

@@ -81,8 +81,8 @@ def main() -> None:
     cal_actual  = val_actual.loc[cal_idx]
     val2_actual = val_actual.loc[val2_idx]
 
-    print(f"Calibration : {cal_idx[0]}  -  {cal_idx[-1]}  ({len(cal_idx)} h)")
-    print(f"Val held-out: {val2_idx[0]}  -  {val2_idx[-1]}  ({len(val2_idx)} h)")
+    print(f"Calibration : {cal_idx[0]}  –  {cal_idx[-1]}  ({len(cal_idx)} h)")
+    print(f"Val held-out: {val2_idx[0]}  –  {val2_idx[-1]}  ({len(val2_idx)} h)")
 
     print("\nPredicting on calibration set...")
     cal_preds = forecaster.predict_quantiles(cal_feat, stride=1)

@@ -2,7 +2,7 @@
 
 Covers:
 * the expected bundle columns appear after build_features(ALL_BUNDLES);
-* lag/rolling features are causal (no look-ahead - verified against an
+* lag/rolling features are causal (no look-ahead — verified against an
   explicit .shift());
 * feature scaling is fit on train only (no leakage of val statistics).
 """

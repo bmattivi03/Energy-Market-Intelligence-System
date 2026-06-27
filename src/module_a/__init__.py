@@ -1,4 +1,4 @@
-"""Module A - DE-LU grid load forecasting.
+"""Module A — DE-LU grid load forecasting.
 
 Produces q10/q50/q90 quantile forecasts for 24-hour-ahead load.
 These feed into Module B as input features.

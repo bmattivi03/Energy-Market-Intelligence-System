@@ -5,13 +5,13 @@ Germany-Luxembourg electricity market. At each hourly step it decides how much
 power to charge or discharge; the market clears at the day-ahead price.
 
 Observation (78-dim flat vector):
-    soc_norm            - state of charge in [0, 1], normalised from capacity
-    hour_sin, hour_cos  - cyclical hour encoding (same as Module B add_calendar)
-    dow_sin, dow_cos    - cyclical day-of-week encoding
-    price_lag1          - last actual price (EUR/MWh), z-scored on train stats
-    q10_h1..q10_h24    - Module B q10 forecasts, z-scored (same stats as price)
-    q50_h1..q50_h24    - Module B q50 forecasts, z-scored
-    q90_h1..q90_h24    - Module B q90 forecasts, z-scored
+    soc_norm            — state of charge in [0, 1], normalised from capacity
+    hour_sin, hour_cos  — cyclical hour encoding (same as Module B add_calendar)
+    dow_sin, dow_cos    — cyclical day-of-week encoding
+    price_lag1          — last actual price (EUR/MWh), z-scored on train stats
+    q10_h1..q10_h24    — Module B q10 forecasts, z-scored (same stats as price)
+    q50_h1..q50_h24    — Module B q50 forecasts, z-scored
+    q90_h1..q90_h24    — Module B q90 forecasts, z-scored
     Total: 1 + 4 + 1 + 72 = 78 dimensions.
 
 Action (continuous scalar):
@@ -121,7 +121,7 @@ class BatteryEnv(gym.Env):
         self._extra_means = {c: float(self._df[c].mean()) for c in self._extra_cols}
         self._extra_stds  = {c: float(self._df[c].std()) or 1.0 for c in self._extra_cols}
 
-        # Gymnasium spaces - obs_dim extends with extra cols.
+        # Gymnasium spaces — obs_dim extends with extra cols.
         obs_dim = _OBS_DIM + len(self._extra_cols)
         obs_lo = np.full(obs_dim, -10.0, dtype=np.float32)
         obs_hi = np.full(obs_dim, 10.0, dtype=np.float32)

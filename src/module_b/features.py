@@ -6,14 +6,14 @@ so notebooks can pick a bundle list and call :func:`build_features`.
 
 Groups:
 
-* :func:`add_calendar` - cyclical hour/dow/month, weekend, DE holidays, DST.
-* :func:`add_price_lags` - standard EPF lags + rolling mean/std/min/max.
-* :func:`add_fundamentals` - clean spark/dark spreads, residual load,
+* :func:`add_calendar` — cyclical hour/dow/month, weekend, DE holidays, DST.
+* :func:`add_price_lags` — standard EPF lags + rolling mean/std/min/max.
+* :func:`add_fundamentals` — clean spark/dark spreads, residual load,
   renewable penetration.
-* :func:`add_spike` - high-residual-load and renewable-scarcity flags.
-* :func:`add_regime` - 2022-2023 European energy-crisis indicator.
-* :func:`add_weather` - lagged + aggregated weather features from 5 cities.
-* :func:`add_load_quantiles` - Module A load q10/q50/q90 forecasts (optional).
+* :func:`add_spike` — high-residual-load and renewable-scarcity flags.
+* :func:`add_regime` — 2022-2023 European energy-crisis indicator.
+* :func:`add_weather` — lagged + aggregated weather features from 5 cities.
+* :func:`add_load_quantiles` — Module A load q10/q50/q90 forecasts (optional).
 """
 
 from __future__ import annotations
@@ -250,14 +250,14 @@ def add_load_quantiles(df: pd.DataFrame) -> pd.DataFrame:
     """Join Module A load quantile forecasts to the price feature frame.
 
     Adds 72 columns: load_q{10,50,90}_h{1..24} indexed by forecast origin.
-    No-op (with warning) if data/module_a/load_quantiles.parquet is missing -
+    No-op (with warning) if data/module_a/load_quantiles.parquet is missing —
     run ``python -m module_a.train`` first to generate it.
     """
     lq = _load_quantile_df()
     if lq is None:
         import warnings
         warnings.warn(
-            "load_quantiles.parquet not found - run module_a.train first. "
+            "load_quantiles.parquet not found — run module_a.train first. "
             "Skipping load_quantiles bundle.",
             stacklevel=2,
         )

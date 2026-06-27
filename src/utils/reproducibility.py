@@ -1,7 +1,7 @@
 """Canonical reproducibility helpers shared across all modules.
 
 Single source of truth for RNG seeding and device selection. Lifted from the
-imputation pipeline (``preprocessing.impute``) - the most complete versions -
+imputation pipeline (``preprocessing.impute``) — the most complete versions —
 so Module A / B / C and the imputer all behave identically.
 
 Both functions import ``torch`` lazily so importing this module stays cheap and

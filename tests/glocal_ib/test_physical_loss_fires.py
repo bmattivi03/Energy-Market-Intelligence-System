@@ -36,7 +36,7 @@ def _make_core(physical_constraints):
         MIT_weight=1.0,
         training_loss=MAE(),
         validation_metric=MSE(),
-        mod_e=1,  # VIB ON - must compose with the physical hook
+        mod_e=1,  # VIB ON — must compose with the physical hook
         physical_constraints=physical_constraints,
     )
 

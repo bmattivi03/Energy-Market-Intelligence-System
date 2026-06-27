@@ -1,4 +1,4 @@
-"""Tests for module_a.model - MultiScaleLSTM + forecaster wrapper.
+"""Tests for module_a.model — MultiScaleLSTM + forecaster wrapper.
 
 Uses a TINY model (small hidden dim, very few epochs) on synthetic data, on
 CPU, so the whole module runs in a few seconds. ``_select_device`` is patched

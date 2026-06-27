@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 import yfinance as yf
 
-# Energy-Charts.info (Fraunhofer ISE) - free, no API key, CC BY 4.0
+# Energy-Charts.info (Fraunhofer ISE) — free, no API key, CC BY 4.0
 _EC_BASE = "https://api.energy-charts.info"
 _EC_CO2_ENDPOINT = "/co2_price"          # returns daily EUA settlement prices
 _EC_CO2_PARAMS   = {"bzn": "DE-LU"}      # bidding zone; try country=de as fallback
@@ -56,7 +56,7 @@ def _fetch_energy_charts_co2(start_date: str, end_date: str) -> pd.Series:
             except requests.RequestException as e:
                 print(f"    [energy-charts] attempt {attempt + 1} failed: {e}")
 
-    print("    [energy-charts] all attempts failed - carbon ETS will use KEUA fallback only")
+    print("    [energy-charts] all attempts failed — carbon ETS will use KEUA fallback only")
     return pd.Series(dtype=float, name="carbon_ets")
 
 
@@ -75,7 +75,7 @@ def fetch_fuel_prices(start_date: str, end_date: str) -> pd.DataFrame:
     ---------------------
     - Energy-Charts covers 2010+ (no API key, CC BY 4.0).
     - KEUA starts 2021-09-29; used to fill any gap Energy-Charts leaves.
-    - Remaining NaN (if any) is left for Glocal-IB imputation - the 2019-2021
+    - Remaining NaN (if any) is left for Glocal-IB imputation — the 2019-2021
       period is MAR (missing because the ETF didn't exist, not price-driven)
       and correlates strongly with electricity price and TTF gas.
     """
@@ -99,11 +99,11 @@ def fetch_fuel_prices(start_date: str, end_date: str) -> pd.DataFrame:
     else:
         print("  [WARN] TTF=F returned no data")
 
-    # ── Carbon ETS - primary: Energy-Charts.info ───────────────────────────────
+    # ── Carbon ETS — primary: Energy-Charts.info ───────────────────────────────
     print(f"Fetching carbon_ets (Energy-Charts CO2 price) from {start_date} to {end_date}...")
     ec_co2 = _fetch_energy_charts_co2(start_date, end_date)
 
-    # ── Carbon ETS - supplement: KEUA (2021-09-29 onward) ─────────────────────
+    # ── Carbon ETS — supplement: KEUA (2021-09-29 onward) ─────────────────────
     print(f"Fetching carbon_ets supplement (KEUA) from {start_date} to {end_date}...")
     keua = yf.download("KEUA", start=start_date, end=end_date, interval="1d",
                        progress=False, auto_adjust=True)
@@ -132,7 +132,7 @@ def fetch_fuel_prices(start_date: str, end_date: str) -> pd.DataFrame:
         frames["carbon_ets"] = ec_co2
 
     elif not keua_s.empty:
-        print("  [WARN] Energy-Charts unavailable - using KEUA only (coverage from 2021-09-29)")
+        print("  [WARN] Energy-Charts unavailable — using KEUA only (coverage from 2021-09-29)")
         frames["carbon_ets"] = keua_s
 
     else:

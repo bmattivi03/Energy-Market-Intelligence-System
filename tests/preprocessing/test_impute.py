@@ -30,14 +30,14 @@ def test_nan_scaler_roundtrip():
 
 
 def test_nan_scaler_zero_variance_column():
-    # column of all 5s - scale_ must not be 0 (would cause divide-by-zero)
+    # column of all 5s — scale_ must not be 0 (would cause divide-by-zero)
     arr = np.array([[5.0], [5.0], [5.0]])
     scaler = NaNScaler().fit(arr)
     assert scaler.scale_[0] == pytest.approx(1.0)
 
 
 def test_nan_scaler_all_nan_column():
-    # column 1 is entirely NaN - scale_ must be 1.0, not NaN
+    # column 1 is entirely NaN — scale_ must be 1.0, not NaN
     arr = np.array([[1.0, np.nan], [3.0, np.nan], [5.0, np.nan]])
     scaler = NaNScaler().fit(arr)
     assert not np.isnan(scaler.scale_[1])
@@ -60,7 +60,7 @@ def test_domain_fix_coal_gas_zero_filled():
 
 def test_domain_fix_nuclear_post_shutdown_only():
     idx = pd.date_range("2023-04-15", periods=3, freq="D", tz="UTC")
-    # idx[0] = 2023-04-15 (on shutdown day - NOT strictly after → keep)
+    # idx[0] = 2023-04-15 (on shutdown day — NOT strictly after → keep)
     # idx[1] = 2023-04-16 (after → NaN → zero)
     # idx[2] = 2023-04-17 (after → NaN → zero)
     df = pd.DataFrame(
@@ -70,9 +70,9 @@ def test_domain_fix_nuclear_post_shutdown_only():
         index=idx,
     )
     fixed = apply_domain_fixes(df)
-    assert fixed["gen_nuclear"].iloc[0] == pytest.approx(100.0)  # on day - kept
-    assert fixed["gen_nuclear"].iloc[1] == pytest.approx(0.0)    # after - zero-filled
-    assert fixed["gen_nuclear"].iloc[2] == pytest.approx(0.0)    # after - zero-filled
+    assert fixed["gen_nuclear"].iloc[0] == pytest.approx(100.0)  # on day — kept
+    assert fixed["gen_nuclear"].iloc[1] == pytest.approx(0.0)    # after — zero-filled
+    assert fixed["gen_nuclear"].iloc[2] == pytest.approx(0.0)    # after — zero-filled
 
 
 def test_domain_fix_carbon_ets_untouched():
@@ -126,8 +126,8 @@ def test_make_windows_preserves_nan():
     arr = np.full((20, 3), np.nan)
     arr[10:20, :] = 1.0
     windows, _ = make_windows(arr, T=10, stride=10)
-    assert np.isnan(windows[0]).all()        # window 0-9: all NaN
-    assert not np.isnan(windows[1]).any()    # window 10-19: all 1.0
+    assert np.isnan(windows[0]).all()        # window 0–9: all NaN
+    assert not np.isnan(windows[1]).any()    # window 10–19: all 1.0
 
 
 def test_make_windows_dtype_float32():
@@ -152,9 +152,9 @@ def test_aggregate_non_overlapping():
 
 def test_aggregate_overlapping_averages():
     T, N = 4, 1
-    # window 0 covers positions 0-3, all value 10
-    # window 1 covers positions 2-5, all value 20
-    # positions 2-3 covered by both → average = 15
+    # window 0 covers positions 0–3, all value 10
+    # window 1 covers positions 2–5, all value 20
+    # positions 2–3 covered by both → average = 15
     preds = np.array(
         [[[10.0], [10.0], [10.0], [10.0]],
          [[20.0], [20.0], [20.0], [20.0]]],

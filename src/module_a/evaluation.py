@@ -267,7 +267,7 @@ def full_report(
 ) -> None:
     """Print a complete evaluation report to stdout."""
     print(f"\n{'='*60}")
-    print(f"Module A Evaluation - {split_name}")
+    print(f"Module A Evaluation — {split_name}")
     print(f"{'='*60}")
 
     # Align predictions to actuals

@@ -13,7 +13,7 @@ SAITS does not currently propagate. Those constraints are enforced post-hoc
 via ``src/preprocessing/physical_constraints.py``.
 
 The penalty is computed in the *scaled* space (matching the rest of SAITS
-training) - callers must convert their physical constraint specs to scaled
+training) — callers must convert their physical constraint specs to scaled
 units, or rely on the fact that ``relu(-x_scaled)`` is monotonic in
 ``relu(-x_unscaled)`` for non-negativity.
 """
@@ -29,9 +29,9 @@ import torch
 class PhysicalConstraintSpec:
     """Per-feature physical-bound spec referenced by feature *index*."""
 
-    # Indices of features that must be ≥ 0 (in scaled space - see note below).
+    # Indices of features that must be ≥ 0 (in scaled space — see note below).
     nonneg_indices: tuple[int, ...] = ()
-    # Per-feature scaled value of "0" - the lower bound after StandardScaler.
+    # Per-feature scaled value of "0" — the lower bound after StandardScaler.
     # If a column was scaled with mean μ and std σ, then the scaled lower bound
     # is -μ/σ. Callers compute and pass these.
     nonneg_zero_in_scaled: tuple[float, ...] = ()

@@ -79,7 +79,7 @@ def test_add_spike_runs_after_fundamentals(small_df: pd.DataFrame) -> None:
 
 
 def test_add_regime_crisis_flag(small_df: pd.DataFrame) -> None:
-    # small_df is in 2023 - entirely inside the crisis window
+    # small_df is in 2023 — entirely inside the crisis window
     out = add_regime(small_df)
     assert (out["crisis_2022_flag"] == 1.0).all()
 

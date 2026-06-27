@@ -22,6 +22,6 @@ SOFTWARE.
 
 ---
 
-This license covers the original work in this repository authored by the
-project team. The vendored `GlocalIB/` directory is third-party code with its
-own copyright and license; see `GlocalIB/LICENSE` and the root `NOTICE` file.
+The imputer vendored in GlocalIB/ is third-party work (Glocal-IB, Yang et al.,
+NeurIPS 2025, arXiv:2510.04910), used under the MIT License. Its copyright
+remains with the original authors.

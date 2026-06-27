@@ -51,7 +51,7 @@ class _SAITS(ModelCore):
         training_loss: Criterion,
         validation_metric: Criterion,
         # ====================================================================
-        # COURSE-PROJECT MODIFICATION - Mattivi & Feliu, TSA 2026
+        # COURSE-PROJECT MODIFICATION — Mattivi & Feliu, TSA 2026
         # mod_e toggles improvement C2 (Variational Information Bottleneck), a
         # training-time change consumed inside this _SAITS core. Default ON;
         # set to 0 to recover the GlocalIB_base baseline. The other two
@@ -125,7 +125,7 @@ class _SAITS(ModelCore):
         self.alignment_loss = MyAlignmentLoss()
 
         # ====================================================================
-        # COURSE-PROJECT MODIFICATION C2 - Variational Information Bottleneck
+        # COURSE-PROJECT MODIFICATION C2 — Variational Information Bottleneck
         # (Mattivi & Feliu 2026; Alemi et al. 2017 "Deep Variational
         # Information Bottleneck").
         #
@@ -134,12 +134,12 @@ class _SAITS(ModelCore):
         # below emit the mean and log-variance of a Gaussian posterior over
         # the contrastive embedding. forward() samples it with the
         # reparameterization trick and calc_criterion() adds a KL-to-prior
-        # term - turning the contrastive head into an information bottleneck
+        # term — turning the contrastive head into an information bottleneck
         # that compresses the representation.
         #
         # The heads are constructed UNCONDITIONALLY (even when mod_e == 0) so
-        # the module-init RNG order - and therefore the initial values of
-        # every parameter - is identical whether the flag is on or off. This
+        # the module-init RNG order — and therefore the initial values of
+        # every parameter — is identical whether the flag is on or off. This
         # is what makes the baseline path (mod_e=0) bit-for-bit reproducible.
         # ====================================================================
         self.mod_e = int(mod_e)
@@ -163,7 +163,7 @@ class _SAITS(ModelCore):
         inputs: dict,
         diagonal_attention_mask: bool = True,
         # [MOD-v2-2: Accept calc_criterion kwarg from pypots 0.13]
-        # Compatibility patch - pypots calls model(inputs, calc_criterion=True)
+        # Compatibility patch — pypots calls model(inputs, calc_criterion=True)
         # during training; the inner _SAITS originally did not accept this.
         calc_criterion: bool = False,
     ) -> dict:
@@ -213,16 +213,16 @@ class _SAITS(ModelCore):
 
         X_obs_z_contras = enc_output_1
         # ====================================================================
-        # COURSE-PROJECT MODIFICATION C2 - Variational Information Bottleneck
+        # COURSE-PROJECT MODIFICATION C2 — Variational Information Bottleneck
         # --------------------------------------------------------------------
         # BASELINE (mod_e == 0): X_obs_p_contras is the output of a plain
-        #   deterministic MLP - see the `else` branch below.
+        #   deterministic MLP — see the `else` branch below.
         # IMPROVEMENT (mod_e == 1): the masked-view embedding is mapped to a
         #   Gaussian posterior N(mu, exp(logvar)) by two MLP heads. During
         #   training we draw a sample with the reparameterization trick
         #   (mu + sigma * eps) so gradients flow; at eval time we use the
         #   mean (deterministic). logvar is clamped for numerical stability.
-        #   A KL-to-prior penalty is added in calc_criterion() - together
+        #   A KL-to-prior penalty is added in calc_criterion() — together
         #   this makes the contrastive projection an information bottleneck
         #   that compresses the representation and reduces over-fitting.
         # ====================================================================
@@ -312,7 +312,7 @@ class _SAITS(ModelCore):
         ):  # if in the training mode (the training stage), return loss result from training_loss
             X_ori, indicating_mask = inputs["X_ori"], inputs["indicating_mask"]
 
-            # ORT loss (observed reconstruction) - unchanged.
+            # ORT loss (observed reconstruction) — unchanged.
             ORT_loss = 0
             ORT_loss += self.training_loss(X_tilde_1, X, missing_mask)
             ORT_loss += self.training_loss(X_tilde_2, X, missing_mask)
@@ -320,7 +320,7 @@ class _SAITS(ModelCore):
             ORT_loss /= 3
             ORT_loss = self.ORT_weight * ORT_loss
 
-            # MIT loss (Masked Imputation Task) - baseline Glocal-IB term.
+            # MIT loss (Masked Imputation Task) — baseline Glocal-IB term.
             MIT_loss = self.MIT_weight * self.training_loss(
                 X_tilde_3, X_ori, indicating_mask
             )
@@ -329,9 +329,9 @@ class _SAITS(ModelCore):
             results["ORT_loss"] = ORT_loss
             results["MIT_loss"] = MIT_loss
 
-            # Alignment branch - baseline Glocal-IB contrastive losses.
+            # Alignment branch — baseline Glocal-IB contrastive losses.
             # With VIB (mod_e) on, these losses operate on the stochastic
-            # projection's sample/mean transparently - no branching needed.
+            # projection's sample/mean transparently — no branching needed.
             results["Contrastive_loss_v1"] = self.contrastive_loss_v1(
                 results=results
             )
@@ -348,7 +348,7 @@ class _SAITS(ModelCore):
             # stochastic projection. KL[N(mu, sigma^2) || N(0, I)] pulls the
             # posterior toward a unit Gaussian, which is the "compression"
             # half of the information bottleneck. It is carried by the
-            # kl_weight slot (loss_weight[1]) - dormant at 1e-6 in the
+            # kl_weight slot (loss_weight[1]) — dormant at 1e-6 in the
             # baseline, set to 1e-3 here (see utils.py --kl_weight).
             if self.mod_e and results.get("VIB_mu") is not None:
                 mu, logvar = results["VIB_mu"], results["VIB_logvar"]

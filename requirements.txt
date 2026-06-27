@@ -1,4 +1,4 @@
-# EMIS dependencies - `>=` floors set to the versions in the active dev env
+# EMIS dependencies — `>=` floors set to the versions in the active dev env
 # (2026-06). For an exact, reproducible install use requirements.lock.txt.
 #
 # Removed (zero import references anywhere in src/tests/notebooks/GlocalIB):

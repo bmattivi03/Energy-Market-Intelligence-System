@@ -7,7 +7,7 @@ replaced with 0s in the data loader, treating those zeros as observed made
 the contrastive alignment target partly noise.
 
 The fix introduces a ``use_real_xori_mask`` flag (default True) and, when
-True, computes ``xori_mask = missing_mask + indicating_mask`` - the genuine
+True, computes ``xori_mask = missing_mask + indicating_mask`` — the genuine
 observation mask of the ground-truth tensor.
 
 These tests exercise the encoder call by capturing the mask argument via a
@@ -99,7 +99,7 @@ def test_default_uses_real_xori_mask() -> None:
     assert len(captured_masks) == 2
     expected_xori_mask = (inputs["missing_mask"] + inputs["indicating_mask"]).clamp(max=1.0)
     assert torch.allclose(captured_masks[1], expected_xori_mask)
-    # And it must NOT be all ones - indicating_mask + missing_mask still has gaps
+    # And it must NOT be all ones — indicating_mask + missing_mask still has gaps
     # at positions where both are zero.
     assert not torch.allclose(captured_masks[1], torch.ones_like(captured_masks[1]))
 

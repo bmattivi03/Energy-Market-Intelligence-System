@@ -141,7 +141,7 @@ def test_cqr_calibration_widens_interval_when_undercovered(fitted_lgbm) -> None:
     m, X, y, cut = fitted_lgbm
     cqr = ConformalQuantileRegressor(base=m, alpha=0.2)  # target 80% coverage
     cqr.calibrate(X.iloc[cut:], y.iloc[cut:])
-    # delta is the additive expansion - non-negative when CQR widens vs base
+    # delta is the additive expansion — non-negative when CQR widens vs base
     assert cqr.delta is not None
 
 

@@ -3,7 +3,7 @@ import pathlib
 
 # Vendored Glocal-IB code lives here; it provides ``otherModel.SAITS`` (the
 # imputer model). Append (not insert-at-0) so it does NOT shadow the project's
-# own same-named top-level packages - GlocalIB ships ``utils`` and ``data``
+# own same-named top-level packages — GlocalIB ships ``utils`` and ``data``
 # packages that would otherwise mask ``src/utils`` and ``src/data``.
 # ``otherModel`` exists only in GlocalIB, so appending still resolves it.
 _GLOCAL_ROOT = pathlib.Path(__file__).parents[2] / "GlocalIB"
@@ -228,7 +228,7 @@ def impute_full_dataset(
 
     imputed = aggregate_predictions(predictions, starts, total_len=total, N=N, T=T)
 
-    # write back observed values - never overwrite known data
+    # write back observed values — never overwrite known data
     observed = ~np.isnan(scaled_arr)
     imputed[observed] = scaled_arr[observed]
 
@@ -332,7 +332,7 @@ def main(
             mod_e=1, mod_l=0, mod_m=0, mod_p=mod_p,
         )
         # Find the best checkpoint produced by a previous fit. Match the model
-        # file by name (SAITS_MY.pypots) - a bare "*.pypots" glob also catches
+        # file by name (SAITS_MY.pypots) — a bare "*.pypots" glob also catches
         # pypots' tensorboard event files (events.*.pypots), and sorted()[-1]
         # would then load the event file instead of the model.
         ckpts = sorted(pathlib.Path(ckpt_path).glob("**/SAITS_MY.pypots"))

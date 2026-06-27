@@ -3,12 +3,12 @@
 Produces quantitative quality scores for an imputed dataset against the raw
 (NaN-bearing) source. Two evaluation modes:
 
-1. ``static_audit`` - no imputer required. Computes per-column distribution
+1. ``static_audit`` — no imputer required. Computes per-column distribution
    distance, autocorrelation preservation, and physical-bound violations
    between the imputed-only cells and the observed-only cells. Used to score
    the *current* ``emis_imputed.parquet`` and produce a baseline report.
 
-2. ``artificial_mask_audit`` - requires a callable imputer
+2. ``artificial_mask_audit`` — requires a callable imputer
    ``Callable[[pd.DataFrame], pd.DataFrame]``. MCAR-masks observed cells in a
    chosen evaluation period, calls the imputer, compares imputed values at
    masked positions against ground truth. Reports per-column MAE / RMSE /
@@ -147,7 +147,7 @@ def compute_sun_elevation(
 ) -> pd.Series:
     """Approximate solar elevation (degrees) at the centre of Germany for each timestamp.
 
-    Uses the NOAA solar position formula directly - much faster than calling
+    Uses the NOAA solar position formula directly — much faster than calling
     astral per-row for ~60k timestamps.
     """
     if index.tz is None:
@@ -391,7 +391,7 @@ def block_mask_audit(
     caller can inspect exactly what was masked.
 
     Reference: time-series-analysis skill's emphasis on multi-step ahead
-    forecasts - block masking is the closest equivalent for imputation.
+    forecasts — block masking is the closest equivalent for imputation.
     """
     rng = np.random.default_rng(seed)
     df = raw_df.copy()
@@ -490,7 +490,7 @@ def summarize_static_to_markdown(
             f"{r.std_imputed if r.std_imputed is None else f'{r.std_imputed:.2f}'} | "
             f"{r.ks_pvalue if r.ks_pvalue is None else f'{r.ks_pvalue:.2e}'} | "
             f"{r.wasserstein if r.wasserstein is None else f'{r.wasserstein:.2f}'} | "
-            f"{physical or '-'} | {reasons or '-'} |"
+            f"{physical or '—'} | {reasons or '—'} |"
         )
     counts = {"green": 0, "yellow": 0, "red": 0}
     for r in rows:
@@ -520,8 +520,8 @@ def summarize_masked_to_markdown(
     for r in rows:
         lines.append(
             f"| `{r.column}` | {r.n_evaluated} | {r.mae:.4f} | {r.rmse:.4f} | "
-            f"{'-' if r.smape is None else f'{r.smape:.3f}'} | "
-            f"{'-' if r.pearson is None else f'{r.pearson:.3f}'} |"
+            f"{'—' if r.smape is None else f'{r.smape:.3f}'} | "
+            f"{'—' if r.pearson is None else f'{r.pearson:.3f}'} |"
         )
     return "\n".join(lines)
 

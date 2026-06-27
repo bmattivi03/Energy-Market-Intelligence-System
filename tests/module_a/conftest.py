@@ -4,10 +4,10 @@ Mirrors the ``small_df`` pattern in ``tests/module_b/conftest.py`` but tailored
 to the columns ``module_a.features.build_features(ALL_BUNDLES)`` actually
 consumes:
 
-* ``load`` - the target (``TARGET_COL``) and the load-lag autoregressive signal.
-* ``{city}_{var}`` weather columns for the 5 German cities × 4 variables -
+* ``load`` — the target (``TARGET_COL``) and the load-lag autoregressive signal.
+* ``{city}_{var}`` weather columns for the 5 German cities × 4 variables —
   consumed by ``add_weather``.
-* ``gen_wind_onshore``, ``gen_wind_offshore``, ``gen_solar`` - consumed by
+* ``gen_wind_onshore``, ``gen_wind_offshore``, ``gen_solar`` — consumed by
   ``add_renewables``.
 
 The DataFrame has a deterministic (seeded), tz-aware UTC hourly index. It is
@@ -78,7 +78,7 @@ def split_dfs() -> tuple[pd.DataFrame, pd.DataFrame]:
     """A (train, val) pair carved from one contiguous deterministic series.
 
     Both share the same generative process so a scaler fit on ``train`` is a
-    sensible transform for ``val`` - but the splits never overlap in time.
+    sensible transform for ``val`` — but the splits never overlap in time.
     """
     full = _make_load_df(n=N_ROWS + 240)
     train = full.iloc[:N_ROWS]

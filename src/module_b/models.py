@@ -324,7 +324,7 @@ class CatBoostQuantileForecaster(BaseQuantileForecaster):
     * ``mode="per_quantile"`` (default): one CatBoostRegressor per quantile,
       each with its own ``Quantile:alpha=X`` loss. Per-quantile ``depth`` and
       ``l2_leaf_reg`` are tunable so the tails can use deeper trees than the
-      median - important for heavy-tailed price data where ``MultiQuantile``
+      median — important for heavy-tailed price data where ``MultiQuantile``
       systematically under-fits the upper tail (see
       ``reports/module_b_catboost_calibration_diagnosis.md``).
     * ``mode="multi"``: single CatBoostRegressor with
@@ -460,7 +460,7 @@ class CatBoostQuantileForecaster(BaseQuantileForecaster):
     def load(cls, path: Path) -> "CatBoostQuantileForecaster":
         path = Path(path)
         meta = json.loads((path / "meta.json").read_text())
-        # Legacy checkpoints (pre-rewrite) don't have a "mode" key - default to
+        # Legacy checkpoints (pre-rewrite) don't have a "mode" key — default to
         # "multi" so they still load.
         mode = meta.get("mode", "multi")
         quantiles = tuple(meta["quantiles"])

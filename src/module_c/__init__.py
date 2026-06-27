@@ -1,10 +1,10 @@
-"""Module C - risk-aware RL battery trading agent.
+"""Module C — risk-aware RL battery trading agent.
 
 Flat 3-file layout mirroring module_b:
 
-* :mod:`module_c.environment` - Gymnasium BESS env + BatteryEnvConfig.
-* :mod:`module_c.reward` - compute_profit, compute_cvar, CvarRewardShaper.
-* :mod:`module_c.train` - BaseAgent ABC, PPO/SAC wrappers, TrainConfig,
+* :mod:`module_c.environment` — Gymnasium BESS env + BatteryEnvConfig.
+* :mod:`module_c.reward` — compute_profit, compute_cvar, CvarRewardShaper.
+* :mod:`module_c.train` — BaseAgent ABC, PPO/SAC wrappers, TrainConfig,
   EvalResult, evaluate_agent, AGENT_REGISTRY, build_agent.
 
 Notebooks in ``notebooks/module_c/`` drive experiments. This package only

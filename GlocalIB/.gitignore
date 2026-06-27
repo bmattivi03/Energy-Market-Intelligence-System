@@ -1,0 +1,9 @@
+# Vendored Glocal-IB fork (SSHB/VIB). Track the code + docs; exclude the
+# upstream's ETT benchmark data and run artifacts (large, irrelevant to the
+# energy-market pipeline). See docs/.../2026-05-30-glocal-ib-sshb-imputer-design.md.
+data/
+results/
+pic/
+log/
+__pycache__/
+*.pyc

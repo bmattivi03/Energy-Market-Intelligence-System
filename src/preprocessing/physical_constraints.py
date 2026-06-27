@@ -5,7 +5,7 @@ applied. None of these functions modify their input. Designed to be composed
 in ``apply_all`` after any imputer (Glocal-IB, KNN, linear interpolation, …).
 
 Constants describing the physical model live alongside the functions so the
-audit harness (``imputation_eval.py``) can reuse them - see
+audit harness (``imputation_eval.py``) can reuse them — see
 ``GENERATION_NONNEG_COLS`` and ``CROSS_BORDER_PAIRS`` re-exported from
 ``imputation_eval``.
 """
@@ -30,7 +30,7 @@ CARBON_ETS_PRE_LAUNCH_INDICATOR = "carbon_ets_pre_launch_indicator"
 STRUCTURAL_ZERO_INDICATOR = "gen_fossil_coal_gas_structural_zero"
 
 # Solar elevation threshold (degrees below horizon) defining "full night".
-# −6° is civil twilight - the conservative threshold below which any non-zero
+# −6° is civil twilight — the conservative threshold below which any non-zero
 # PV generation is physically impossible.
 SOLAR_NIGHT_ELEVATION_THRESHOLD = -6.0
 
@@ -38,7 +38,7 @@ SOLAR_NIGHT_ELEVATION_THRESHOLD = -6.0
 def clip_generation(df: pd.DataFrame) -> pd.DataFrame:
     """Clip every non-negative generation column to ``[0, +inf)``.
 
-    ``gen_hydro_pumped`` is intentionally excluded - pumped storage consumption
+    ``gen_hydro_pumped`` is intentionally excluded — pumped storage consumption
     is naturally negative.
     """
     out = df.copy()

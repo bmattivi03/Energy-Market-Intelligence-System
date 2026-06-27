@@ -44,7 +44,7 @@ class LoadSequenceDataset(Dataset):
     Each item:
         x_short : float32 tensor (SHORT_WINDOW, n_features)
         x_long  : float32 tensor (LONG_WINDOW,  n_features)
-        y       : float32 tensor (HORIZON,)   - load at origin+1h..origin+24h
+        y       : float32 tensor (HORIZON,)   — load at origin+1h..origin+24h
     """
 
     def __init__(

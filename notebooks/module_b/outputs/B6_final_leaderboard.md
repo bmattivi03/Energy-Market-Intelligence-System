@@ -1,4 +1,4 @@
-# Module B - final test-set leaderboard (2025 Q1)
+# Module B — final test-set leaderboard (2025 Q1)
 
 ## h1_6
 

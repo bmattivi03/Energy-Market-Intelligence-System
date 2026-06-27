@@ -1,4 +1,4 @@
-"""Smoke tests for classical model wrappers - fit + predict + save/load."""
+"""Smoke tests for classical model wrappers — fit + predict + save/load."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ def supervised_dataset(small_df):
     feat = build_features(small_df, bundles=("calendar", "lags"))
     X, y = prepare_supervised(
         feat,
-        horizons=range(1, 4),  # h1, h2, h3 - fast
+        horizons=range(1, 4),  # h1, h2, h3 — fast
         past_cols=["price_lag1h", "price_lag24h", "price_lag168h", "price_rmean24h"],
         future_cols=["hour_sin", "hour_cos"],
     )

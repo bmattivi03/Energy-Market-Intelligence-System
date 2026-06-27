@@ -6,10 +6,10 @@ a selected subset.
 
 Groups:
 
-* :func:`add_calendar`   - cyclical hour/dow/month, weekend, DE holidays, DST.
-* :func:`add_load_lags`  - load lags + rolling stats (primary autoregressive signal).
-* :func:`add_weather`    - lagged weather + degree-hours + cross-city aggregates.
-* :func:`add_renewables` - lagged wind/solar totals + residual load proxy.
+* :func:`add_calendar`   — cyclical hour/dow/month, weekend, DE holidays, DST.
+* :func:`add_load_lags`  — load lags + rolling stats (primary autoregressive signal).
+* :func:`add_weather`    — lagged weather + degree-hours + cross-city aggregates.
+* :func:`add_renewables` — lagged wind/solar totals + residual load proxy.
 
 No leakage guarantee: at origin t, only data through t-1h enters any feature.
 The raw weather columns in the lookback window are available to the LSTM
@@ -39,7 +39,7 @@ DEFAULT_ROLLING_WINDOWS: tuple[int, ...] = (24, 168)
 WIND_COLS = ("gen_wind_onshore", "gen_wind_offshore")
 SOLAR_COL = "gen_solar"
 
-# Heating/cooling thresholds (°C) - standard German building-physics values
+# Heating/cooling thresholds (°C) — standard German building-physics values
 HEATING_BASE = 15.0
 COOLING_BASE = 22.0
 
@@ -147,7 +147,7 @@ def add_weather(
             for lag in lags:
                 out[f"{col}_lag{lag}h"] = out[col].shift(lag).astype(np.float32)
 
-    # Cross-city mean temperature (lag 24h - main exogenous signal)
+    # Cross-city mean temperature (lag 24h — main exogenous signal)
     present_temp = [c for c in temp_cols if c in out.columns]
     if present_temp:
         mean_temp = out[present_temp].mean(axis=1)
@@ -160,14 +160,14 @@ def add_weather(
         out["heating_dh_lag24h"] = out["heating_dh"].shift(24).astype(np.float32)
         out["cooling_dh_lag24h"] = out["cooling_dh"].shift(24).astype(np.float32)
 
-    # Cross-city mean wind speed (lag 24h - wind-chill proxy)
+    # Cross-city mean wind speed (lag 24h — wind-chill proxy)
     present_wind = [c for c in wind10_cols if c in out.columns]
     if present_wind:
         out["weather_mean_wind_lag24h"] = (
             out[present_wind].mean(axis=1).shift(24).astype(np.float32)
         )
 
-    # Cross-city mean solar radiation (lag 24h - daylight proxy)
+    # Cross-city mean solar radiation (lag 24h — daylight proxy)
     present_rad = [c for c in rad_cols if c in out.columns]
     if present_rad:
         out["weather_mean_rad_lag24h"] = (
@@ -265,7 +265,7 @@ def build_features(
 
 
 # ============================================================ feature column lists
-# Populated after build_features - used by train.py to slice feature arrays.
+# Populated after build_features — used by train.py to slice feature arrays.
 
 CALENDAR_COLS: tuple[str, ...] = (
     "hour_sin", "hour_cos", "dow_sin", "dow_cos", "month_sin", "month_cos",

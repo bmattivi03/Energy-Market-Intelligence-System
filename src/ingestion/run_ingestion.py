@@ -70,7 +70,7 @@ def validate_output(df: pd.DataFrame, name: str) -> bool:
     ok = True
     rows = len(df)
 
-    # Resolve min/max date - handles both flat DatetimeIndex and MultiIndex (e.g. weather)
+    # Resolve min/max date — handles both flat DatetimeIndex and MultiIndex (e.g. weather)
     min_date = max_date = None
     if isinstance(df.index, pd.MultiIndex):
         for level_idx in range(df.index.nlevels):
@@ -150,7 +150,7 @@ def main():
 
     if args.fresh and os.path.exists(CHECKPOINT_FILE):
         os.remove(CHECKPOINT_FILE)
-        print("[INFO] Checkpoint cleared - re-fetching all sources.")
+        print("[INFO] Checkpoint cleared — re-fetching all sources.")
 
     checkpoint = load_checkpoint()
 
@@ -221,7 +221,7 @@ def main():
     else:
         cb_raw = fetch_crossborder_range(START_YEAR, END_YEAR)
         if not cb_raw.empty:
-            # Pivot to wide format - each direction becomes a column.
+            # Pivot to wide format — each direction becomes a column.
             # Different borders report at different resolutions (AT/CH at 15-min,
             # FR at 60-min with gaps). Resample everything to 1H so the index is
             # consistent and FR columns don't end up 84% NaN from the mismatch.
@@ -266,12 +266,12 @@ def main():
             fuels.to_parquet(out)
             print(f"Saved {out}  ({len(fuels):,} rows)")
             ok = validate_output(fuels, "fuels")
-            # Only mark done if carbon_ets has <50% NaN - otherwise keep retryable
+            # Only mark done if carbon_ets has <50% NaN — otherwise keep retryable
             carbon_nan = fuels["carbon_ets"].isna().mean() if "carbon_ets" in fuels.columns else 1.0
             if ok and carbon_nan < 0.50:
                 mark_done(checkpoint, "fuels")
             else:
-                print("  [INFO] fuels not checkpointed - carbon_ets NaN too high, will retry next run")
+                print("  [INFO] fuels not checkpointed — carbon_ets NaN too high, will retry next run")
 
     print("\n=== Ingestion complete ===")
     print_final_report()

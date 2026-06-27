@@ -25,7 +25,7 @@ from pypots.utils.logging import logger
 
 
 # ============================================================================
-# crazy-tries branch - Round 1: Harmonic-Subspace Refinement (HSR)
+# crazy-tries branch — Round 1: Harmonic-Subspace Refinement (HSR)
 # ----------------------------------------------------------------------------
 # Inference-time post-processing. For each (window, feature) it fits a smooth,
 # periodic basis to the OBSERVED cells by ridge-regularised least squares, then
@@ -67,13 +67,13 @@ def _hsr_refine(X, missing_mask, X_tilde_3, Phi, lam: float) -> torch.Tensor:
 
 
 # ============================================================================
-# crazy-tries branch - Round 2: Whittaker-Henderson / HP-filter refinement
+# crazy-tries branch — Round 2: Whittaker-Henderson / HP-filter refinement
 # ----------------------------------------------------------------------------
 # Same blend-with-an-anchored-fit template as Round 1, but the fit is the
 # non-parametric Whittaker-Henderson smoother (a.k.a. the Hodrick-Prescott
 # filter): minimise data fidelity on observed cells + a second-difference
-# (curvature) penalty. Positive-definite for any mask, so - unlike Round 1's
-# Fourier basis - it cannot overfit/oscillate when observations are scarce.
+# (curvature) penalty. Positive-definite for any mask, so — unlike Round 1's
+# Fourier basis — it cannot overfit/oscillate when observations are scarce.
 # See CRAZY_TRIES_LOG.md, Round 2.
 # ============================================================================
 def _second_diff_matrix(n_steps: int, device, dtype) -> torch.Tensor:
@@ -230,15 +230,15 @@ class SAITS_MY(BaseNNImputer):
         Whether to print out the training logs during the training process.
 
     mod_e :
-        Course-project modification C2 - Variational Information Bottleneck
+        Course-project modification C2 — Variational Information Bottleneck
         (training-time). 1 enables it (default), 0 recovers the baseline.
 
     mod_l :
-        Course-project modification I - Output Smoothing (inference-time,
+        Course-project modification I — Output Smoothing (inference-time,
         3-tap moving average on imputed cells). 1 enables it (default).
 
     mod_m :
-        Course-project modification J - Median Filter (inference-time, 3-tap
+        Course-project modification J — Median Filter (inference-time, 3-tap
         median on imputed cells). Alternative to ``mod_l``; if both are 1,
         ``mod_l`` takes precedence. Defaults to 0.
     """
@@ -273,7 +273,7 @@ class SAITS_MY(BaseNNImputer):
         model_saving_strategy: Optional[str] = "best",
         verbose: bool = True,
         # ====================================================================
-        # COURSE-PROJECT MODIFICATIONS - Mattivi & Feliu, TSA 2026
+        # COURSE-PROJECT MODIFICATIONS — Mattivi & Feliu, TSA 2026
         # Three confirmed improvements to Glocal-IB, each a 0/1 toggle that
         # defaults to ON. Set all three to 0 to recover the GlocalIB_base
         # baseline. See RATIONALE.md / RESULTS.md.
@@ -281,12 +281,12 @@ class SAITS_MY(BaseNNImputer):
         #             consumed inside _SAITS).
         #   mod_l  I:  Output Smoothing (inference-time; consumed in predict()).
         #   mod_m  J:  Median Filter (inference-time; consumed in predict()).
-        #             Alternative to mod_l - if both are 1, mod_l wins.
+        #             Alternative to mod_l — if both are 1, mod_l wins.
         # ====================================================================
         mod_e: int = 1,
         mod_l: int = 1,
         mod_m: int = 0,
-        # crazy-tries branch - inference-time experimental refinements.
+        # crazy-tries branch — inference-time experimental refinements.
         # Default OFF; mutually exclusive post-filters with mod_l/mod_m.
         # predict() precedence: mod_l > mod_m > mod_n > mod_o > mod_p.
         #   mod_n  R1: Harmonic-Subspace Refinement.
@@ -370,7 +370,7 @@ class SAITS_MY(BaseNNImputer):
             MIT_weight=self.MIT_weight,
             training_loss=self.training_loss,
             validation_metric=self.validation_metric,
-            # Course-project modification C2 (VIB) - the only modification
+            # Course-project modification C2 (VIB) — the only modification
             # that touches the training-time core; I/J act in predict().
             mod_e=self.mod_e,
             use_real_xori_mask=use_real_xori_mask,
@@ -520,13 +520,13 @@ class SAITS_MY(BaseNNImputer):
             results = self.model.forward(inputs, diagonal_attention_mask)
 
             # ================================================================
-            # COURSE-PROJECT MODIFICATIONS I & J - inference-time post-filters
+            # COURSE-PROJECT MODIFICATIONS I & J — inference-time post-filters
             # ----------------------------------------------------------------
             # BASELINE: the imputation is `results["imputed_data"]` directly
             #   (observed cells kept, missing cells filled with the model
-            #   output X_tilde_3) - see the final `else` branch.
+            #   output X_tilde_3) — see the final `else` branch.
             # IMPROVEMENT I (mod_l): smooth X_tilde_3 with a 3-tap moving
-            #   average before re-inserting the observed cells - a local
+            #   average before re-inserting the observed cells — a local
             #   time-series smoothness prior.
             # IMPROVEMENT J (mod_m): use a 3-tap median filter instead. This
             #   is an ALTERNATIVE to I; when both flags are on, I takes
@@ -549,7 +549,7 @@ class SAITS_MY(BaseNNImputer):
             elif self.mod_m:
                 # --- Improvement J: Median Filter (3-tap median) ---
                 # The median is the optimal location estimator under a Laplace
-                # likelihood - i.e. it matches the MAE training loss - and is
+                # likelihood — i.e. it matches the MAE training loss — and is
                 # robust to the occasional outlier prediction.
                 mm = inputs["missing_mask"]
                 X_tilde_3 = results["X_tilde_3"]   # [B, T, N]
@@ -596,7 +596,7 @@ class SAITS_MY(BaseNNImputer):
 
                 # (1) hold out a deterministic 10% of the observed cells.
                 # 10% (not 25%) so the second forward pass sees almost the
-                # same missing rate as the real one - the held-out model
+                # same missing rate as the real one — the held-out model
                 # prediction stays honest even at mr=0.9.
                 gen = torch.Generator(device="cpu").manual_seed(20260515)
                 rand = torch.rand(B, T, N, generator=gen).to(mm.device)
@@ -605,7 +605,7 @@ class SAITS_MY(BaseNNImputer):
                 mm_ho = mm * keep
                 X_ho = X * keep
 
-                # (2) honest model imputation of H - second forward pass
+                # (2) honest model imputation of H — second forward pass
                 results_B = self.model.forward(
                     {"X": X_ho, "missing_mask": mm_ho}, diagonal_attention_mask
                 )

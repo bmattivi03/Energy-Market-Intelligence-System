@@ -91,7 +91,7 @@ def _idle_profit(price_df: pd.DataFrame, n_episodes: int, cfg, seed: int) -> lis
 def _greedy_profit(price_df: pd.DataFrame, n_episodes: int, cfg, seed: int) -> list[float]:
     """Greedy oracle within each 24h episode: charge 2h cheapest, discharge 2h most expensive.
 
-    Uses actual prices known at episode start - theoretical upper bound approximation.
+    Uses actual prices known at episode start — theoretical upper bound approximation.
     """
     from module_c.environment import CAPACITY_MWH, MAX_POWER_MW, EFFICIENCY, DT_H
     import math

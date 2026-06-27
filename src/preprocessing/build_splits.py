@@ -54,7 +54,7 @@ def apply_post_imputation_fixes(
 
 
 def split_frame(df: pd.DataFrame):
-    """Return (train, val, test) on fixed bounds (2019-2023 / 2024 / Q1-2025)."""
+    """Return (train, val, test) on fixed bounds (2019–2023 / 2024 / Q1-2025)."""
     train = df[df.index < TRAIN_END]
     val = df[(df.index >= TRAIN_END) & (df.index < VAL_END)]
     test = df[(df.index >= VAL_END) & (df.index < TEST_END)]

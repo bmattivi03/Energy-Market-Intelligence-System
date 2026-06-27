@@ -1,4 +1,4 @@
-# Energy Market Intelligence System - pipeline orchestration.
+# Energy Market Intelligence System — pipeline orchestration.
 #
 #   make all                 # splits -> A -> B -> C (assumes raw + imputed exist)
 #   make pipeline            # smart full run with skip-if-exists (scripts/run_pipeline.py)

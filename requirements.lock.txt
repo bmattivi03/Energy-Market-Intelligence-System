@@ -1,4 +1,4 @@
-# EMIS locked dependencies - exact `==` pins from the active dev environment
+# EMIS locked dependencies — exact `==` pins from the active dev environment
 # (captured 2026-06 via importlib.metadata). Use this file for a byte-for-byte
 # reproducible install:  pip install -r requirements.lock.txt
 #

@@ -2,9 +2,9 @@
 
 Three layers:
 
-* :func:`compute_profit` - step P&L from a price and power decision.
-* :func:`compute_cvar` - Expected Shortfall (CVaR) at a given tail level.
-* :class:`CvarRewardShaper` - stateful shaper that maintains a rolling profit
+* :func:`compute_profit` — step P&L from a price and power decision.
+* :func:`compute_cvar` — Expected Shortfall (CVaR) at a given tail level.
+* :class:`CvarRewardShaper` — stateful shaper that maintains a rolling profit
   history and applies the lambda·CVaR penalty each step.
 """
 
@@ -58,7 +58,7 @@ class CvarRewardShaper:
     lambda_risk:
         Weight on the CVaR penalty (lambda in "Profit − lambda·CVaR").
     alpha:
-        Tail level for CVaR - default 0.05 (bottom 5% of profit steps).
+        Tail level for CVaR — default 0.05 (bottom 5% of profit steps).
     window:
         Rolling-window length in steps. 168 = one week of hourly data,
         matching Module B's longest rolling feature window (price_rmean168h).

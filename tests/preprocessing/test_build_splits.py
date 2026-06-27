@@ -40,4 +40,4 @@ def test_split_bounds_exclusive_inclusive():
     assert val.index.max() < pd.Timestamp("2025-01-01", tz="UTC")
     assert test.index.min() == pd.Timestamp("2025-01-01", tz="UTC")
     assert test.index.max() < pd.Timestamp("2025-04-01", tz="UTC")
-    assert len(test) == 2160  # Jan-Mar 2025 hourly
+    assert len(test) == 2160  # Jan–Mar 2025 hourly

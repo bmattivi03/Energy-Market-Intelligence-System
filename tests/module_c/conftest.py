@@ -1,12 +1,12 @@
 """Fixtures for Module C (RL battery dispatch) tests.
 
-All data is synthetic, seeded, and self-contained - no network, no parquet,
+All data is synthetic, seeded, and self-contained — no network, no parquet,
 no checkpoints. The shapes mirror the real Module B → Module C contract:
 
-* ``price`` - actual day-ahead clearing price (EUR/MWh).
-* ``q10_h1`` .. ``q90_h24`` - 72 Module B quantile forecast columns
+* ``price`` — actual day-ahead clearing price (EUR/MWh).
+* ``q10_h1`` .. ``q90_h24`` — 72 Module B quantile forecast columns
   (3 quantile labels × 24 horizons).
-* optionally ``load_q50_h{1,6,12,24}`` - 4 load-quantile extras for the A→C path.
+* optionally ``load_q50_h{1,6,12,24}`` — 4 load-quantile extras for the A→C path.
 """
 
 import numpy as np
